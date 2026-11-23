@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upcoming Batches | Vertexa Technologies</title>
+  <meta name="description" content="Currently open training batches — dates, timings, mode and enrolment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="batches">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header id="site-header"></header>
+  <main id="main">
+    <section class="page-banner">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="index.html">Home</a></li><li aria-current="page">Upcoming Batches</li></ol></nav>
+        <span class="eyebrow anim">Training Batches</span>
+        <h1 class="anim d1">Upcoming Batches</h1>
+        <p class="lead anim d2">Live instructor-led batches currently open. Past batches are archived automatically once they end.</p>
+      </div>
+    </section>
+    <section class="section" style="padding-top:48px">
+      <div class="container">
+        <div class="notice reveal" style="margin-bottom:32px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span>All batches below are <strong>sample data</strong> for the demo. Real batch dates, timings and status must come from management.</span></div>
+        <div class="grid grid-3" id="batch-grid"></div>
+      </div>
+    </section>
+    <section class="section alt">
+      <div class="container">
+        <div class="section-head reveal"><h2>Completed batches</h2><p>Archived — not open for enrolment.</p></div>
+        <div class="grid grid-3" id="past-grid"></div>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
