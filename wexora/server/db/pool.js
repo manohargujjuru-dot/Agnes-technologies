@@ -20,9 +20,12 @@ function buildConfig() {
   return {
     connectionString: url.toString(),
     ssl: ca ? { ca, rejectUnauthorized: true } : { rejectUnauthorized: false },
-    max: config.isVercel ? 3 : 10,
-    idleTimeoutMillis: 10_000,
-    connectionTimeoutMillis: 10_000
+    /* Aiven's free plan allows very few connections. Serverless instances each get ONE
+       connection that closes after 5 s idle; local/self-hosted servers use up to 5. */
+    max: config.isVercel ? 1 : 5,
+    idleTimeoutMillis: config.isVercel ? 5_000 : 10_000,
+    connectionTimeoutMillis: 10_000,
+    allowExitOnIdle: true
   };
 }
 
@@ -31,6 +34,10 @@ export function getPool() {
   if (!pool) {
     pool = new pg.Pool(buildConfig());
     pool.on("error", err => console.error("[db] idle client error:", err.message));
+    // On Vercel, release idle connections before the function instance is suspended
+    if (config.isVercel) {
+      import("@vercel/functions").then(({ attachDatabasePool }) => attachDatabasePool(pool)).catch(() => {});
+    }
   }
   return pool;
 }
