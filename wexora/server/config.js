@@ -23,7 +23,15 @@ export const config = {
   }
 };
 
+/* Names of required settings that are missing (values are never exposed). */
+export function missingConfig() {
+  const missing = [];
+  if (!config.databaseUrl) missing.push("DATABASE_URL");
+  if (!config.jwtSecret || config.jwtSecret.length < 32) missing.push("JWT_SECRET (32+ characters)");
+  return missing;
+}
+
 export function assertServerConfig() {
-  if (!config.jwtSecret || config.jwtSecret.length < 32) throw new Error("JWT_SECRET must be set (32+ characters).");
-  if (!config.databaseUrl) throw new Error("DATABASE_URL must be set (Aiven PostgreSQL Service URI).");
+  const missing = missingConfig();
+  if (missing.length) throw new Error(`Missing environment variables: ${missing.join(", ")}`);
 }
