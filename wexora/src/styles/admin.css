@@ -247,3 +247,18 @@ html[data-theme="dark"] .person a:hover { color: #ff8f84; }
   .login-card { padding: 24px 18px; gap: 14px; }
   .data-table tr { padding: 14px; gap: 8px 14px; }
 }
+
+/* ================= Admin phones: lighter cards ================= */
+@media (max-width: 640px) {
+  .stat-card strong { font-size: 1.2rem; }
+  .stat-card small { font-size: .76rem; }
+  .stat-icon svg { width: 20px; height: 20px; }
+  .panel-head h2 { font-size: 1rem; }
+  .mini-list strong { font-size: .86rem; font-weight: 600; }
+  .data-table { font-size: .86rem; }
+  .data-table strong, .cell-course strong, .person strong { font-weight: 600; }
+  .data-table td::before { font-size: .64rem; }
+  .data-table tr { border-radius: 12px; }
+  .cell-course .tech-logo.sm { width: 34px; height: 34px; }
+  .admin-side nav a { font-size: .95rem; }
+}
