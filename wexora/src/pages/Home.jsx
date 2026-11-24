@@ -1,18 +1,28 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Icon, Photo, Reveal, SectionHead, TechLogo, useTitle } from "../components/ui.jsx";
 import { BatchCard, ServiceCard } from "../components/Cards.jsx";
 import EnquiryForm from "../components/EnquiryForm.jsx";
 import { useData } from "../context/DataContext.jsx";
+import { CountUp, TechMarquee, useParallax } from "../components/Effects.jsx";
 
 export default function Home() {
   useTitle(null, "Web and app development, IT support, corporate training and instructor-led online courses.");
-  const { upcomingBatches, getCourse, services, technologies } = useData();
+  const { upcomingBatches, getCourse, services, technologies, courses, categories } = useData();
   const featured = upcomingBatches.filter(b => b.featured);
+  const heroRef = useRef(null);
+  useParallax(heroRef);
+  const stats = [
+    { icon: "book", value: courses.length, label: "Courses offered" },
+    { icon: "code", value: technologies.length, label: "Technologies" },
+    { icon: "grid", value: categories.length, label: "Learning tracks" },
+    { icon: "cal", value: upcomingBatches.length, label: "Open batches" }
+  ].filter(s => s.value > 0);
 
   return (
     <>
       {/* HERO */}
-      <section className="hero" aria-labelledby="hero-title">
+      <section className="hero" aria-labelledby="hero-title" ref={heroRef}>
         <div className="hero-bg" aria-hidden="true"><span className="blob b1" /><span className="blob b2" /><span className="ring" /></div>
         <div className="container hero-grid">
           <div>
@@ -33,6 +43,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <TechMarquee />
 
       {/* WHAT WE SERVE */}
       <section className="section">
@@ -61,6 +73,20 @@ export default function Home() {
             </ul>
             <Link to="/about" className="btn btn-primary">Read More</Link>
           </Reveal>
+        </div>
+      </section>
+
+      {/* STATS — photo background with a slow parallax */}
+      <section className="stats-band" aria-label="At a glance">
+        <div className="stats-bg" aria-hidden="true"><Photo name="classroom" /></div>
+        <div className="container stats-grid">
+          {stats.map((s, i) => (
+            <Reveal key={s.label} className="stat-tile" delay={i * 90}>
+              <span className="st-icon"><Icon name={s.icon} size={22} /></span>
+              <strong><CountUp value={s.value} suffix="+" /></strong>
+              <span>{s.label}</span>
+            </Reveal>
+          ))}
         </div>
       </section>
 

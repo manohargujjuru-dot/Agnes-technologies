@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { Burger, Icon, Logo, ThemeToggle } from "./ui.jsx";
 import { useData } from "../context/DataContext.jsx";
+import { ScrollFx, useSpotlight } from "./Effects.jsx";
 
 const SOCIAL_LABELS = { linkedin: "LinkedIn", facebook: "Facebook", x: "X", youtube: "YouTube", instagram: "Instagram" };
 /* Hover-to-open only for real mouse pointers on wide screens; touch devices (iPad) use tap. */
@@ -112,11 +113,16 @@ function Footer() {
   const socials = Object.entries(settings.social || {}).filter(([, url]) => url);
   return (
     <footer className="site-footer">
+      <div className="footer-glow" aria-hidden="true" />
       <div className="container">
         <div className="footer-grid">
-          <div>
+          <div className="footer-brand">
             <Logo light />
             <p className="footer-about">{settings.tagline}</p>
+            <div className="footer-quick">
+              {settings.phone && <a href={telHref(settings.phone)} className="fq-btn"><Icon name="tel" size={16} /> Call us</a>}
+              <Link to="/contact#enquiry" className="fq-btn fq-primary">Send enquiry <Icon name="arrow" size={16} /></Link>
+            </div>
             {socials.length > 0 && (
               <div className="socials" aria-label="Social media">
                 {socials.map(([key, url]) => (
@@ -125,32 +131,33 @@ function Footer() {
               </div>
             )}
           </div>
-          <div>
+          <div className="footer-col">
             <h4>Company</h4>
-            <ul>
+            <ul className="footer-links">
               <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/services">Services</Link></li>
               <li><Link to="/batches">Upcoming Batches</Link></li>
               <li><Link to="/contact">Contact</Link></li>
             </ul>
           </div>
-          <div>
-            <h4>Services</h4>
-            <ul>{services.map(s => <li key={s.id}><Link to={`/services/${s.id}`}>{s.title}</Link></li>)}</ul>
-          </div>
-          <div>
+          <div className="footer-col">
             <h4>Courses</h4>
-            <ul>
-              {categories.slice(0, 6).map(c => <li key={c.id}><Link to={`/courses?cat=${c.id}#catalogue`}>{c.name}</Link></li>)}
-              <li><Link to="/courses">All courses →</Link></li>
+            <ul className="footer-links">
+              {categories.slice(0, 5).map(c => <li key={c.id}><Link to={`/courses?cat=${c.id}#catalogue`}>{c.name}</Link></li>)}
+              <li><Link to="/courses" className="fl-all">All courses</Link></li>
             </ul>
           </div>
-          <div>
+          <div className="footer-col footer-services">
+            <h4>Services</h4>
+            <ul className="footer-links">{services.map(s => <li key={s.id}><Link to={`/services/${s.id}`}>{s.title}</Link></li>)}</ul>
+          </div>
+          <div className="footer-col footer-contact">
             <h4>Get in touch</h4>
             <ul className="contact-list">
-              {settings.phone && <li><Icon name="tel" size={18} /><a href={telHref(settings.phone)}>{settings.phone}</a></li>}
-              {settings.email && <li><Icon name="mail" size={18} /><a href={`mailto:${settings.email}`}>{settings.email}</a></li>}
-              {settings.address && <li><Icon name="pin" size={18} /><span>{settings.address}</span></li>}
-              {settings.hours && <li><Icon name="clock" size={18} /><span>{settings.hours}</span></li>}
+              {settings.phone && <li><span className="cl-icon"><Icon name="tel" size={16} /></span><span><small>Phone</small><a href={telHref(settings.phone)}>{settings.phone}</a></span></li>}
+              {settings.email && <li><span className="cl-icon"><Icon name="mail" size={16} /></span><span><small>Email</small><a href={`mailto:${settings.email}`}>{settings.email}</a></span></li>}
+              {settings.address && <li><span className="cl-icon"><Icon name="pin" size={16} /></span><span><small>Address</small>{settings.address}</span></li>}
+              {settings.hours && <li><span className="cl-icon"><Icon name="clock" size={16} /></span><span><small>Hours</small>{settings.hours}</span></li>}
             </ul>
           </div>
         </div>
@@ -184,8 +191,10 @@ function ScrollManager() {
 
 export default function Layout() {
   const { error, loading, refresh } = useData();
+  useSpotlight();
   return (
     <>
+      <ScrollFx />
       <a className="skip-link" href="#main">Skip to content</a>
       <ScrollManager />
       <Header />
