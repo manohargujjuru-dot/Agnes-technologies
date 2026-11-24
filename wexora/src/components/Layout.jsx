@@ -78,7 +78,7 @@ function Header() {
         <Logo />
         <div className={`nav-backdrop ${open ? "show" : ""}`} onClick={() => setOpen(false)} aria-hidden="true" />
         <nav aria-label="Main" id="nav-drawer" className={`nav-drawer ${open ? "open" : ""}`}>
-          <div className="drawer-head"><span className="drawer-title">Menu</span></div>
+          <div className="drawer-head"><span className="drawer-title">Menu</span><ThemeToggle className="theme-drawer" /></div>
           <ul className="nav-menu" id="nav-menu">
             {nav.map(item => item.children ? (
               <li key={item.to} className={`has-dropdown ${drop === item.to ? "open" : ""}`}
@@ -99,7 +99,7 @@ function Header() {
           <DrawerFooter />
         </nav>
         <div className="nav-cta">
-          <ThemeToggle />
+          <ThemeToggle className="theme-desktop" />
           <Burger open={open} onClick={() => setOpen(o => !o)} controls="nav-drawer" />
         </div>
       </div>

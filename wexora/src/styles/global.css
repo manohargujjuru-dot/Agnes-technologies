@@ -705,6 +705,14 @@ html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *
 }
 .site-header .theme-toggle { border-radius: 50%; }
 
+/* Phones & tablets: theme button lives in the side menu's top corner, beside the close (×) button */
+@media (max-width: 960px) {
+  .theme-toggle.theme-desktop { display: none; }
+  .drawer-head { justify-content: space-between; padding-right: 76px; }
+  .theme-toggle.theme-drawer { width: 40px; height: 40px; }
+}
+@media (max-width: 640px) { .drawer-head { padding-right: 68px; } }
+
 /* ================= Desktop navbar: logo left · menu centred · theme button right ================= */
 @media (min-width: 961px) {
   .site-header .container.nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
