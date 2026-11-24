@@ -39,7 +39,7 @@ export default function Courses() {
   return (
     <>
       <PageBanner crumbs={[{ label: "Courses" }]} eyebrow="Course Catalogue" title="Explore Our Courses"
-        lead="Instructor-led technical training across cloud, AI, development, testing and more — built around practical, hands-on learning."
+        lead="Instructor-led · Hands-on labs · Cloud, AI/ML, Development, Testing, Data"
         actions={<>
           <Link to="/contact?type=course#enquiry" className="btn btn-primary">Enquire About a Course</Link>
           <Link to="/batches" className="btn btn-outline">Upcoming Batches</Link>

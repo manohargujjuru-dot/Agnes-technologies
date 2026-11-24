@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { Burger, Icon, Logo, ThemeToggle } from "./ui.jsx";
 import { useData } from "../context/DataContext.jsx";
 import { ScrollFx, useSpotlight } from "./Effects.jsx";
+import QuickSearch from "./QuickSearch.jsx";
 
 const SOCIAL_LABELS = { linkedin: "LinkedIn", facebook: "Facebook", x: "X", youtube: "YouTube", instagram: "Instagram" };
 /* Hover-to-open only for real mouse pointers on wide screens; touch devices (iPad) use tap. */
@@ -27,6 +28,8 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [drop, setDrop] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [navUp, setNavUp] = useState(false);
+  const { settings } = useData();
   const { pathname, search } = useLocation();
 
   const nav = useMemo(() => [
@@ -54,7 +57,17 @@ function Header() {
     return () => document.removeEventListener("pointerdown", onDown);
   }, [drop]);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    /* scrolled: compact header · navUp: scrolling back up → header switches to the brand navy;
+       scrolling down (or back at the very top) → normal white header */
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+      if (y < 80) { setNavUp(false); last = y; return; }
+      if (Math.abs(y - last) < 6) return;
+      setNavUp(y < last);
+      last = y;
+    };
     const onKey = e => { if (e.key === "Escape") { setOpen(false); setDrop(null); } };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -74,7 +87,7 @@ function Header() {
   }, []);
 
   return (
-    <header className={`site-header ${scrolled ? "scrolled" : ""} ${open ? "drawer-open" : ""}`}>
+    <header className={`site-header ${scrolled ? "scrolled" : ""} ${navUp && !open ? "nav-up" : ""} ${open ? "drawer-open" : ""}`}>
       <div className="container nav">
         <Logo />
         <div className={`nav-backdrop ${open ? "show" : ""}`} onClick={() => setOpen(false)} aria-hidden="true" />
@@ -100,6 +113,8 @@ function Header() {
           <DrawerFooter />
         </nav>
         <div className="nav-cta">
+          <QuickSearch />
+          {settings.phone && <a href={telHref(settings.phone)} className="nav-phone" aria-label={`Call ${settings.phone}`}><span className="np-ic"><Icon name="tel" size={15} /></span><span className="np-num">{settings.phone}</span></a>}
           <ThemeToggle className="theme-desktop" />
           <Burger open={open} onClick={() => setOpen(o => !o)} controls="nav-drawer" />
         </div>

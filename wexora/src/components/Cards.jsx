@@ -4,6 +4,7 @@ import { ICON_BY_TEXT } from "../data/logos.js";
 import { batchStatus, useData } from "../context/DataContext.jsx";
 
 const fmtDate = d => (d ? new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "—");
+export const splitTags = (text, n = 4) => String(text || "").split(/\s*[,;|]\s*/).map(t => t.trim()).filter(Boolean).slice(0, n);
 const weeksBetween = (a, b) => (a && b ? Math.max(1, Math.round((new Date(b) - new Date(a)) / (7 * 864e5))) : "—");
 
 export function ServiceCard({ service, delay }) {
@@ -11,7 +12,9 @@ export function ServiceCard({ service, delay }) {
     <Reveal as="article" className="card hover service-card" delay={delay}>
       <div className="icon-box"><Icon name={service.icon} size={26} /></div>
       <h3>{service.title}</h3>
-      <p>{service.short}</p>
+      {service.caps?.length
+        ? <ul className="tech-bullets">{service.caps.slice(0, 4).map(c => <li key={c}>{c}</li>)}</ul>
+        : <p>{service.short}</p>}
       <Link className="link-arrow" to={`/services/${service.id}`}>Learn More <Icon name="arrow" size={16} /></Link>
     </Reveal>
   );
@@ -32,7 +35,9 @@ export function CourseCard({ course, index = 0 }) {
           <span><Icon name="clock" size={16} /> {course.weeks} weeks</span>
           <span><Icon name="level" size={16} /> {course.level || "Level: TBC"}</span>
         </div>
-        <p>{course.summary}</p>
+        {splitTags(course.tools).length
+          ? <ul className="tech-tags" aria-label="Key topics">{splitTags(course.tools).map(t => <li key={t}>{t}</li>)}</ul>
+          : <p className="clamp-2">{course.summary}</p>}
         <div className="course-actions">
           <Link className="btn btn-outline btn-sm" to={`/courses/${course.id}`}>View Details</Link>
           <Link className="btn btn-primary btn-sm" to={`/contact?type=course&course=${course.id}#enquiry`}>Enquire Now</Link>

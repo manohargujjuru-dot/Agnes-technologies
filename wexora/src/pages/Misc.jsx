@@ -12,7 +12,7 @@ export function Batches() {
   return (
     <>
       <PageBanner crumbs={[{ label: "Upcoming Batches" }]} eyebrow="Training Batches" title="Upcoming Batches"
-        lead="Live instructor-led batches currently open. Past batches are archived automatically once they end." />
+        lead="Live instructor-led batches · Online & classroom · Limited seats" />
       <section className="section tight-top">
         <div className="container">
           {upcomingBatches.length
@@ -22,7 +22,7 @@ export function Batches() {
       </section>
       <section className="section alt">
         <div className="container">
-          <SectionHead title="Completed batches">Archived — not open for enrolment.</SectionHead>
+          <SectionHead title="Completed batches" />
           {past.length ? <div className="grid grid-3">{past.map(b => <BatchCard key={b.id} batch={b} />)}</div> : <p className="muted center">No archived batches.</p>}
         </div>
       </section>
@@ -54,7 +54,7 @@ export function Contact() {
   return (
     <>
       <PageBanner crumbs={[{ label: "Contact Us" }]} eyebrow="Contact Us" title="Let's talk"
-        lead="Have a project, a training need or a question about a course? Send us a message and our team will get back to you." />
+        lead="Projects · Training · Course enquiries" />
       <section className="section tight-top">
         <div className="container">
           <div className="contact-cards">

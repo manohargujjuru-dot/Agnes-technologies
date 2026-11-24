@@ -28,7 +28,11 @@ export default function Home() {
           <div>
             <span className="eyebrow anim">Technology Services &amp; Training</span>
             <h1 id="hero-title" className="anim d1">Build software. <span className="hl">Build skills.</span> Grow faster.</h1>
-            <p className="hero-lead anim d2">We design and develop websites and mobile apps, support your IT, and run instructor-led training that helps people and teams master in-demand technology.</p>
+            <ul className="hero-points anim d2">
+              <li><Icon name="code" size={18} /> Full-stack web &amp; mobile app development</li>
+              <li><Icon name="wrench" size={18} /> Cloud, DevOps &amp; IT support</li>
+              <li><Icon name="laptop" size={18} /> Instructor-led training: AI/ML, Cloud, Testing, Data</li>
+            </ul>
             <div className="btn-row anim d3">
               <Link to="/services" className="btn btn-primary">Explore Services <Icon name="arrow" size={18} /></Link>
               <Link to="/courses" className="btn btn-outline-light">Explore Courses</Link>
@@ -49,9 +53,7 @@ export default function Home() {
       {/* WHAT WE SERVE */}
       <section className="section">
         <div className="container">
-          <SectionHead eyebrow="What We Serve" title="Services that move your business forward">
-            From your first website to upskilling an entire team — one partner for building, supporting and learning technology.
-          </SectionHead>
+          <SectionHead eyebrow="What We Serve" title="Services that move your business forward" />
           <div className="grid grid-3">
             {services.map((s, i) => <ServiceCard key={s.id} service={s} delay={(i % 3) * 90} />)}
           </div>
@@ -65,11 +67,12 @@ export default function Home() {
           <Reveal delay={120}>
             <span className="eyebrow">Who We Are</span>
             <h2>A software and training team in one place</h2>
-            <p className="muted">We are a technology services company focused on software and mobile app development. Alongside building products for our clients, we deliver practical technical training and dependable IT support.</p>
             <ul className="check-list">
-              <li>Custom websites, web applications and mobile apps</li>
-              <li>Instructor-led online and corporate training</li>
-              <li>IT support and ongoing technical assistance</li>
+              <li><span><strong>Web apps</strong> — React, Angular, Node.js, .NET</span></li>
+              <li><span><strong>Mobile apps</strong> — Android, iOS, cross-platform</span></li>
+              <li><span><strong>Cloud &amp; DevOps</strong> — AWS, Azure, CI/CD</span></li>
+              <li><span><strong>Training</strong> — AI/ML, Data Science, Testing, Scripting</span></li>
+              <li><span><strong>IT support</strong> — troubleshooting, maintenance, upgrades</span></li>
             </ul>
             <Link to="/about" className="btn btn-primary">Read More</Link>
           </Reveal>
@@ -110,9 +113,7 @@ export default function Home() {
       {/* BATCHES */}
       <section className="section alt">
         <div className="container">
-          <SectionHead eyebrow="Upcoming Project Training Batches" title="Join the next batch">
-            Live, instructor-led batches currently open for enrolment.
-          </SectionHead>
+          <SectionHead eyebrow="Upcoming Project Training Batches" title="Join the next batch" />
           {featured.length ? (
             <div className="grid grid-3">{featured.map((b, i) => <BatchCard key={b.id} batch={b} delay={i * 90} />)}</div>
           ) : (
@@ -128,11 +129,10 @@ export default function Home() {
           <Reveal>
             <span className="eyebrow">Enquiry</span>
             <h2>Tell us what you need</h2>
-            <p className="muted">Choose a topic and the form will ask for the details that matter. We'll get back to you to discuss next steps.</p>
             <ul className="check-list">
-              <li>Website or app project quotes</li>
-              <li>Course and batch information</li>
-              <li>IT support and corporate training requests</li>
+              <li>Web / mobile app project quotes</li>
+              <li>Course syllabus, batches &amp; fees</li>
+              <li>IT support &amp; corporate training</li>
             </ul>
           </Reveal>
           <Reveal className="form-card" delay={120}><EnquiryForm kind="general" source="Home page" /></Reveal>

@@ -1,10 +1,9 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import { Notice, PageBanner, PageLoader, Reveal, SectionHead, TBC, TechLogo, useTitle } from "../components/ui.jsx";
-import { BatchCard, CourseCard } from "../components/Cards.jsx";
+import { Notice, PageBanner, PageLoader, Reveal, SectionHead, TechLogo, useTitle } from "../components/ui.jsx";
+import { BatchCard, CourseCard, splitTags } from "../components/Cards.jsx";
 import EnquiryForm from "../components/EnquiryForm.jsx";
 import { useData } from "../context/DataContext.jsx";
 
-const FAQ = ["Is this course suitable for me?", "What are the prerequisites?", "What are the class timings and mode?", "Are session recordings available?", "Will I receive a certificate?", "What support is available after the course?"];
 
 export default function CourseDetail() {
   const { id } = useParams();
@@ -26,7 +25,7 @@ export default function CourseDetail() {
       <PageBanner
         crumbs={[{ label: "Courses", to: "/courses" }, { label: catName(c.category), to: `/courses?cat=${c.category}#catalogue` }, { label: c.title }]}
         eyebrow={catName(c.category)} title={c.title} lead={c.summary}
-        actions={<><a href="#enquiry" className="btn btn-primary">Enquire Now</a><a href="#syllabus" className="btn btn-outline">View Syllabus</a></>}
+        actions={<><a href="#enquiry" className="btn btn-primary">Enquire Now</a>{c.modules?.length > 0 && <a href="#syllabus" className="btn btn-outline">View Syllabus</a>}</>}
         art={<div className="course-hero-art"><img src="/images/code.webp" alt="" className="photo" /><TechLogo icon={c.icon} text={c.logo} size="xl" label={`${c.title} logo`} /></div>} />
 
       <section className="section">
@@ -34,58 +33,52 @@ export default function CourseDetail() {
           <div className="detail-main">
             {c.flag && <Notice style={{ marginBottom: 32 }}>{c.flag}</Notice>}
 
-            <Reveal as="section">
-              <h2>About the course</h2>
-              {c.overview ? <p className="muted pre">{c.overview}</p>
-                : <Notice>Full course overview — what it covers, why the skill is useful and what learners will practise — will be supplied by the trainer/management.</Notice>}
-            </Reveal>
+            {splitTags(c.tools, 12).length > 0 && (
+              <Reveal as="section">
+                <h2>Key topics &amp; tools</h2>
+                <ul className="tech-tags lg">{splitTags(c.tools, 12).map(t => <li key={t}>{t}</li>)}</ul>
+              </Reveal>
+            )}
 
-            <Reveal as="section">
-              <h2>Learning outcomes</h2>
-              {c.outcomes?.length ? <ul className="check-list">{c.outcomes.map(o => <li key={o}>{o}</li>)}</ul>
-                : <p className="muted">Skills and knowledge learners gain after completing the course: <TBC />.</p>}
-            </Reveal>
+            {(c.overview || c.summary) && (
+              <Reveal as="section">
+                <h2>About the course</h2>
+                <p className="muted pre">{c.overview || c.summary}</p>
+              </Reveal>
+            )}
 
-            <Reveal as="section" id="syllabus">
-              <h2>Detailed syllabus</h2>
-              <div className="accordion">
-                {c.modules?.length ? c.modules.map((m, i) => (
-                  <details key={i} open={i === 0}>
-                    <summary>Module {i + 1} — {m.title}</summary>
-                    <div className="acc-body">
-                      {m.topics?.length ? <ul>{m.topics.map(t => <li key={t}>{t}</li>)}</ul> : <TBC />}
-                    </div>
-                  </details>
-                )) : [1, 2, 3].map(n => (
-                  <details key={n}><summary>Module {n} — title to be confirmed</summary><div className="acc-body">Topic list will be added from the approved syllabus.</div></details>
-                ))}
-              </div>
-            </Reveal>
+            {c.outcomes?.length > 0 && (
+              <Reveal as="section">
+                <h2>Learning outcomes</h2>
+                <ul className="check-list">{c.outcomes.map(o => <li key={o}>{o}</li>)}</ul>
+              </Reveal>
+            )}
 
-            <Reveal as="section">
-              <h2>Tools, software &amp; prerequisites</h2>
-              <p className="muted"><strong>Tools:</strong> {c.tools || <TBC />}</p>
-              <p className="muted"><strong>Prerequisites:</strong> {c.prerequisites || <TBC />}</p>
-            </Reveal>
-
-            <Reveal as="section">
-              <h2>Frequently asked questions</h2>
-              <div className="accordion">
-                {FAQ.map(q => <details key={q}><summary>{q}</summary><div className="acc-body"><TBC /></div></details>)}
-              </div>
-            </Reveal>
+            {c.modules?.length > 0 && (
+              <Reveal as="section" id="syllabus">
+                <h2>Detailed syllabus</h2>
+                <div className="accordion">
+                  {c.modules.map((m, i) => (
+                    <details key={i} open={i === 0}>
+                      <summary>Module {i + 1}: {m.title}</summary>
+                      {m.topics?.length > 0 && <div className="acc-body"><ul>{m.topics.map(t => <li key={t}>{t}</li>)}</ul></div>}
+                    </details>
+                  ))}
+                </div>
+              </Reveal>
+            )}
 
             <Reveal as="section">
               <h2>Upcoming batches</h2>
               {batches.length ? <div className="grid grid-2">{batches.map(b => <BatchCard key={b.id} batch={b} />)}</div>
-                : <p className="muted">No batches are currently scheduled for this course. <a href="#enquiry">Enquire</a> to be notified of the next intake.</p>}
+                : <p className="muted">No open batch right now. <a href="#enquiry">Enquire</a> for the next intake.</p>}
             </Reveal>
           </div>
 
           <aside className="card facts-card" aria-label="Course facts">
             <h3>Course facts</h3>
             <ul className="facts-list">
-              {facts.map(([k, v]) => <li key={k}><span>{k}</span><span>{v || <TBC />}</span></li>)}
+              {facts.filter(([, v]) => v).map(([k, v]) => <li key={k}><span>{k}</span><span>{v}</span></li>)}
             </ul>
             <a href="#enquiry" className="btn btn-primary block">Enquire Now</a>
           </aside>

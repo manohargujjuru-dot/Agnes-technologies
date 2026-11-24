@@ -3,7 +3,7 @@
    Lighter navy hero · wrapped category chips · new footer · scroll progress ·
    floating buttons · spotlight cards · parallax · logo marquee · stats band
    ===================================================================== */
-:root { --hero-1: #2d4675; --hero-2: #1f3253; }
+:root { --hero-1: #324c7d; --hero-2: #233759; }
 html[data-theme="dark"] { --hero-1: #20345a; --hero-2: #131f37; }
 
 /* ---------- Lighter navy hero + page banners ---------- */
@@ -97,17 +97,17 @@ body.menu-open .fab-stack { opacity: 0; pointer-events: none; }
 html[data-theme="dark"] .section.alt { background-image: radial-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px); }
 
 /* ---------- Technology logo marquee ---------- */
-.marquee { overflow: hidden; background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 0;
+.marquee { overflow: hidden; background: var(--surface); border-bottom: 1px solid var(--border); padding: 24px 0;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
 .mq-track { display: flex; width: max-content; animation: mqScroll var(--mq-dur, 40s) linear infinite; }
 .marquee:hover .mq-track { animation-play-state: paused; }
 .mq-group { display: flex; align-items: center; gap: 44px; padding-right: 44px; }
 .mq-item { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; font-weight: 600; font-size: .92rem; color: var(--ink);
-  opacity: .7; filter: grayscale(.7); transition: opacity .3s, filter .3s, transform .3s; }
+  opacity: 1; filter: none; transition: color .3s, transform .3s; }
 .mq-item:hover { opacity: 1; filter: none; transform: translateY(-2px); }
 @keyframes mqScroll { to { transform: translateX(-50%); } }
 @media (max-width: 640px) {
-  .marquee { padding: 12px 0; }
+  .marquee { padding: 16px 0; }
   .mq-group { gap: 28px; padding-right: 28px; }
   .mq-item { font-size: .82rem; }
   .mq-item .tech-logo.sm { width: 32px; height: 32px; }

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Icon, Notice, PageBanner, Photo, Reveal, SectionHead, Steps, useTitle } from "../components/ui.jsx";
+import { Icon, PageBanner, Photo, Reveal, SectionHead, Steps, useTitle } from "../components/ui.jsx";
 
 const VALUES = [
   ["Integrity", "shield", "Honest advice and transparent work."],
@@ -22,7 +22,7 @@ export default function About() {
   return (
     <>
       <PageBanner crumbs={[{ label: "About Us" }]} eyebrow="About Us" title="Technology built and taught by practitioners"
-        lead="We help businesses build software and help people build skills — combining development, IT services and hands-on training under one roof."
+        lead="Software development · IT services · Hands-on technical training"
         art={<Photo name="officeTeam" eager />} />
 
       <section className="section">
@@ -30,13 +30,16 @@ export default function About() {
           <Reveal>
             <span className="eyebrow">Company Overview</span>
             <h2>Who we are and who we serve</h2>
-            <p className="muted">We are a technology services company specialising in software and mobile app development. Our team builds websites, web applications and mobile apps, provides IT support, and delivers instructor-led technical training.</p>
-            <p className="muted">We work with small and growing businesses that need dependable technology, organisations looking to upskill their teams, and individual learners building careers in technology.</p>
-            <Notice>Company background, founding year and milestones will be added once verified by management. No statistics or client logos are shown until confirmed.</Notice>
+            <ul className="check-list">
+              <li><span><strong>What we do</strong> — web, mobile &amp; cloud solutions, IT support, technical training</span></li>
+              <li><span><strong>Tech stack</strong> — React, Angular, Node.js, Java, .NET, Python, AWS, Azure</span></li>
+              <li><span><strong>Who we serve</strong> — startups, SMEs, enterprise teams, individual learners</span></li>
+              <li><span><strong>Delivery</strong> — Agile sprints, code reviews, CI/CD, post-launch support</span></li>
+            </ul>
           </Reveal>
           <div className="grid grid-2">
             <Reveal className="split-art framed span-2"><Photo name="workshop" /></Reveal>
-            {[["Software & Web", "Websites, portals and custom web applications."], ["Mobile Apps", "Android, iOS and cross-platform apps."], ["Training", "Online and corporate technical training."], ["IT Services", "Consulting, troubleshooting and support."]].map(([t, d], i) => (
+            {[["Software & Web", "React · Node.js · .NET · REST APIs"], ["Mobile Apps", "Android · iOS · Cross-platform"], ["Training", "AI/ML · Cloud · Testing · Data"], ["IT Services", "Cloud · Networking · Support"]].map(([t, d], i) => (
               <Reveal className="card mini-card" key={t} delay={i * 80}><h3>{t}</h3><p>{d}</p></Reveal>
             ))}
           </div>
@@ -48,19 +51,19 @@ export default function About() {
           <Reveal className="mv-card">
             <span className="eyebrow on-dark">Mission</span>
             <h2>Our Mission</h2>
-            <p>To deliver reliable technology solutions and practical training that help businesses perform better and help people build lasting careers. <em>(Draft — awaiting approved wording.)</em></p>
+            <p>To deliver reliable technology solutions and practical training that help businesses perform better and help people build lasting careers.</p>
           </Reveal>
           <Reveal className="mv-card red" delay={120}>
             <span className="eyebrow on-dark">Vision</span>
             <h2>Our Vision</h2>
-            <p>To be a trusted partner for building software and building skills. <em>(Draft — awaiting approved wording.)</em></p>
+            <p>To be a trusted partner for building software and building skills.</p>
           </Reveal>
         </div>
       </section>
 
       <section className="section">
         <div className="container">
-          <SectionHead eyebrow="Core Values" title="What guides our work">Final values to be confirmed by management.</SectionHead>
+          <SectionHead eyebrow="Core Values" title="What guides our work" />
           <div className="grid grid-3">
             {VALUES.map(([t, ic, d], i) => (
               <Reveal className="card hover value-card" key={t} delay={(i % 3) * 90}>
@@ -80,9 +83,8 @@ export default function About() {
 
       <section className="section">
         <div className="container">
-          <SectionHead eyebrow="Our Team" title="Team & instructors" />
-          <Notice info style={{ maxWidth: 680, margin: "0 auto" }}>Team and instructor profiles (photo, name, designation, bio, expertise) will appear here once approved for publication.</Notice>
-          <div className="center btn-row justify-center" style={{ marginTop: 40 }}>
+          <SectionHead eyebrow="Work With Us" title="Ready to build or learn?" />
+          <div className="center btn-row justify-center">
             <Link to="/services" className="btn btn-primary">Our Services</Link>
             <Link to="/contact" className="btn btn-outline">Contact Us</Link>
           </div>
