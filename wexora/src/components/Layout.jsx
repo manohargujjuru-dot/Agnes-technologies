@@ -3,8 +3,6 @@ import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { Burger, Icon, Logo, ThemeToggle } from "./ui.jsx";
 import { useData } from "../context/DataContext.jsx";
 import { ScrollFx, useSpotlight } from "./Effects.jsx";
-import QuickSearch from "./QuickSearch.jsx";
-
 const SOCIAL_LABELS = { linkedin: "LinkedIn", facebook: "Facebook", x: "X", youtube: "YouTube", instagram: "Instagram" };
 /* Hover-to-open only for real mouse pointers on wide screens; touch devices (iPad) use tap. */
 const canHover = () => window.innerWidth > 960 && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -29,7 +27,6 @@ function Header() {
   const [drop, setDrop] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [navUp, setNavUp] = useState(false);
-  const { settings } = useData();
   const { pathname, search } = useLocation();
 
   const nav = useMemo(() => [
@@ -121,8 +118,6 @@ function Header() {
           <DrawerFooter />
         </nav>
         <div className="nav-cta">
-          <QuickSearch />
-          {settings.phone && <a href={telHref(settings.phone)} className="nav-phone" aria-label={`Call ${settings.phone}`}><span className="np-ic"><Icon name="tel" size={15} /></span><span className="np-num">{settings.phone}</span></a>}
           <ThemeToggle className="theme-desktop" />
           <Burger open={open} onClick={() => setOpen(o => !o)} controls="nav-drawer" />
         </div>
