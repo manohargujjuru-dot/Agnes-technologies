@@ -93,7 +93,7 @@ p { margin: 0 0 1em; }
 /* ================= Header ================= */
 .site-header { position: sticky; top: 0; z-index: 100; background: var(--header-bg); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
 .site-header.scrolled { border-color: var(--border); box-shadow: 0 4px 20px rgba(25, 40, 65, .06); }
-.nav { display: flex; align-items: center; justify-content: space-between; height: 74px; gap: 20px; }
+.nav { display: flex; align-items: center; justify-content: space-between; height: 84px; gap: 20px; }
 .nav-menu { display: flex; align-items: center; gap: 2px; list-style: none; margin: 0; padding: 0; }
 .nav-menu > li { position: relative; }
 .nav-menu a, .nav-menu .nav-link { display: flex; align-items: center; gap: 4px; padding: 10px 14px; border-radius: 10px; color: var(--ink); font-weight: 500; font-size: .95rem; background: none; border: 0; cursor: pointer; font-family: inherit; position: relative; }
@@ -723,10 +723,10 @@ html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *
   .site-header .nav-cta { justify-self: end; margin: 0; }
 }
 /* land the course list just below the sticky header */
-#catalogue { scroll-margin-top: 84px; }
+#catalogue { scroll-margin-top: 94px; }
 
 /* ================= Logo: square tile + name, side by side ================= */
-.logo { display: inline-flex; align-items: center; gap: 12px; --logo-size: 46px; }
+.logo { display: inline-flex; align-items: center; gap: 14px; --logo-size: 56px; }
 .logo-mark {
   width: var(--logo-size, 46px); height: var(--logo-size, 46px); flex-shrink: 0;
   display: grid; place-items: center; padding: 3px;
@@ -738,18 +738,18 @@ html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *
 .logo:hover .logo-mark { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(25, 40, 65, .14); }
 /* name block sized to match the square: two lines, vertically centred */
 .logo-text { display: flex; flex-direction: column; justify-content: center; height: var(--logo-size, 46px); line-height: 1.1; }
-.logo-text strong { font-size: 1.38rem; line-height: 1.1; }
-.logo-text small { font-size: .62rem; line-height: 1.2; margin-top: 3px; letter-spacing: .24em; }
+.logo-text strong { font-size: 1.62rem; line-height: 1.1; }
+.logo-text small { font-size: .72rem; line-height: 1.2; margin-top: 4px; letter-spacing: .24em; }
 .logo-light .logo-mark, html[data-theme="dark"] .logo-mark { border-color: transparent; box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
 @media (max-width: 640px) {
-  .logo { gap: 10px; --logo-size: 40px; }
+  .logo { gap: 10px; --logo-size: 46px; }
   .logo-mark { border-radius: 10px; padding: 2px; }
-  .logo-text strong { font-size: 1.18rem; }
-  .logo-text small { font-size: .56rem; letter-spacing: .2em; margin-top: 2px; }
+  .logo-text strong { font-size: 1.32rem; }
+  .logo-text small { font-size: .62rem; letter-spacing: .2em; margin-top: 3px; }
 }
 @media (max-width: 360px) {
-  .logo { --logo-size: 36px; gap: 8px; }
-  .logo-text strong { font-size: 1.08rem; }
+  .logo { --logo-size: 40px; gap: 8px; }
+  .logo-text strong { font-size: 1.16rem; }
 }
 
 /* ================= Phones: slightly more compact controls (≤ 640px only) ================= */
@@ -779,7 +779,7 @@ html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *
   .burger span:nth-child(3) { top: 26px; }
   .burger.is-open span:nth-child(1), .burger.is-open span:nth-child(3) { top: 19.5px; }
   .nav-cta { gap: 8px; }
-  .nav { height: 66px; }
+  .nav { height: 70px; }
   /* tabs, cards, sections */
   .tab { padding: 7px 14px; font-size: .85rem; min-height: 38px; }
   .card { padding: 18px; }

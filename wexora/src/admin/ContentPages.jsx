@@ -9,6 +9,7 @@ import { adminApi } from "../api.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { ConfirmDialog, Modal, Toast, useAdminData } from "./AdminShell.jsx";
 import { Loading, useToast } from "./AdminPages.jsx";
+import LogoManager from "./LogoManager.jsx";
 
 const lines = text => text.split("\n").map(s => s.trim()).filter(Boolean);
 
@@ -377,7 +378,8 @@ function SettingsForm({ initial, show, toast }) {
   };
   return (
     <>
-      <PageHead title="Site settings" text="Company details shown in the header, footer and Contact page." />
+      <PageHead title="Site settings" text="Company logo and details shown in the header, footer and Contact page." />
+      <div style={{ marginBottom: 24 }}><LogoManager /></div>
       <form className="panel" onSubmit={submit} noValidate>
         <div className="panel-head"><h2>Company</h2></div>
         <div className="form-grid">

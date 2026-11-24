@@ -53,13 +53,19 @@ export function Icon({ name, size = 22, ...rest }) {
 /* ---------- Brand logo (public/logo.webp, transparent PNG fallback) ----------
    `tile` puts it on a white rounded tile so the navy parts stay visible on dark backgrounds. */
 /* Square brand mark: the logo centred on a white rounded-square tile (looks right on light and dark backgrounds). */
-export function LogoMark({ size }) {
+export function LogoMark({ size, src }) {
+  const { logoVersion } = useData() || {};
+  const custom = src || (logoVersion ? `/api/logo?v=${logoVersion}` : "");
   return (
     <span className="logo-mark" style={size ? { "--logo-size": `${size}px` } : undefined} aria-hidden="true">
-      <picture>
-        <source srcSet="/logo-square.webp" type="image/webp" />
-        <img src="/logo-square.png" alt="" width="192" height="192" decoding="async" />
-      </picture>
+      {custom ? (
+        <img src={custom} alt="" width="512" height="512" decoding="async" />
+      ) : (
+        <picture>
+          <source srcSet="/logo-square.webp" type="image/webp" />
+          <img src="/logo-square.png" alt="" width="512" height="512" decoding="async" />
+        </picture>
+      )}
     </span>
   );
 }

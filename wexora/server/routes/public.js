@@ -16,19 +16,31 @@ router.get("/health", h(async (_req, res) => {
 
 /* Everything the layout needs in one request: settings, categories, services, technologies */
 router.get("/site", h(async (_req, res) => {
-  const [settings, categories, services, technologies] = await Promise.all([
+  const [settings, categories, services, technologies, logo] = await Promise.all([
     query("SELECT value FROM settings WHERE key = 'site'"),
     query("SELECT * FROM categories ORDER BY sort, name"),
     query("SELECT * FROM services WHERE published = TRUE ORDER BY sort, title"),
-    query("SELECT * FROM technologies WHERE published = TRUE ORDER BY sort, name")
+    query("SELECT * FROM technologies WHERE published = TRUE ORDER BY sort, name"),
+    query("SELECT updated_at FROM settings WHERE key = 'logo'")
   ]);
   shortCache(res);
   res.json({
     settings: settings.rows[0]?.value || {},
+    logoVersion: logo.rows[0] ? new Date(logo.rows[0].updated_at).getTime() : null,
     categories: categories.rows.map(toCategory),
     services: services.rows.map(toService),
     technologies: technologies.rows.map(toTechnology)
   });
+}));
+
+/* Custom company logo uploaded in Admin → Settings. URLs carry ?v=<version>, so it can be cached for a year. */
+router.get("/logo", h(async (req, res) => {
+  const { rows } = await query("SELECT value FROM settings WHERE key = 'logo'");
+  const v = rows[0]?.value;
+  if (!v?.data) return res.redirect(302, "/logo-square.png");
+  res.set("Content-Type", v.mime);
+  res.set("Cache-Control", req.query.v ? "public, max-age=31536000, immutable" : "public, max-age=0, s-maxage=30");
+  res.send(Buffer.from(v.data, "base64"));
 }));
 
 router.get("/courses", h(async (_req, res) => {

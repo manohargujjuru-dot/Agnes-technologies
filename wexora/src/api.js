@@ -71,6 +71,9 @@ export const adminApi = {
 
   settings: () => api("/admin/settings", { auth: true }),
   saveSettings: s => api("/admin/settings", { method: "PUT", body: s, auth: true }),
+  logo: () => api("/admin/settings/logo", { auth: true }),
+  uploadLogo: image => api("/admin/settings/logo", { method: "PUT", body: { image }, auth: true }),
+  deleteLogo: () => api("/admin/settings/logo", { method: "DELETE", auth: true }),
   changePassword: (currentPassword, newPassword) => api("/auth/change-password", { method: "POST", body: { currentPassword, newPassword }, auth: true }),
   me: () => api("/auth/me", { auth: true }),
   updateProfile: p => api("/auth/profile", { method: "PUT", body: p, auth: true }),

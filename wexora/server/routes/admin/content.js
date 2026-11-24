@@ -130,4 +130,36 @@ router.put("/settings", h(async (req, res) => {
   res.json(value);
 }));
 
+/* ---------- Company logo (stored as an image in the settings table, served at /api/logo) ---------- */
+const LOGO_RE = /^data:(image\/(?:png|webp|jpeg));base64,([A-Za-z0-9+/]+={0,2})$/;
+const LOGO_MAX_BYTES = 1024 * 1024; // 1 MB after decoding — the admin page sends a 512×512 image (~40–200 KB)
+const MAGIC = {
+  "image/png": b => b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47,
+  "image/jpeg": b => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff,
+  "image/webp": b => b.toString("ascii", 0, 4) === "RIFF" && b.toString("ascii", 8, 12) === "WEBP"
+};
+
+router.get("/settings/logo", h(async (_req, res) => {
+  const { rows } = await query("SELECT updated_at FROM settings WHERE key = 'logo'");
+  res.json({ custom: !!rows[0], version: rows[0] ? new Date(rows[0].updated_at).getTime() : null });
+}));
+
+router.put("/settings/logo", h(async (req, res) => {
+  const m = LOGO_RE.exec(String(req.body?.image || ""));
+  if (!m) return validationError(res, { image: "Upload a PNG, JPG or WebP image." });
+  const buf = Buffer.from(m[2], "base64");
+  if (!buf.length || buf.length > LOGO_MAX_BYTES) return validationError(res, { image: "Logo must be under 1 MB." });
+  if (!MAGIC[m[1]](buf)) return validationError(res, { image: "That file isn't a valid image." });
+  const { rows } = await query(
+    `INSERT INTO settings (key, value) VALUES ('logo', $1)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()
+     RETURNING updated_at`, [JSON.stringify({ mime: m[1], data: m[2], bytes: buf.length })]);
+  res.json({ custom: true, version: new Date(rows[0].updated_at).getTime() });
+}));
+
+router.delete("/settings/logo", h(async (_req, res) => {
+  await query("DELETE FROM settings WHERE key = 'logo'");
+  res.json({ custom: false, version: null });
+}));
+
 export default router;

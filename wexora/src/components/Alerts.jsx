@@ -71,7 +71,7 @@ export function AlertProvider({ children }) {
 
   const push = useCallback((type, title, message = "", opts = {}) => {
     const id = ++seq;
-    const duration = opts.duration ?? (type === "error" ? 8000 : 5500);
+    const duration = opts.duration ?? { success: 3000, info: 3500, warning: 4000, error: 6000 }[type];
     setAlerts(list => [...list, { id, type, title, message, duration, action: opts.action }].slice(-MAX));
     return id;
   }, []);
@@ -132,7 +132,7 @@ export function SuccessCard({ title, children, reference, onReset }) {
       <h3 className="sc-title">{title}</h3>
       <div className="sc-text">{children}</div>
       {reference && <div className="sc-ref">Reference <code>{reference}</code></div>}
-      {onReset && <button type="button" className="btn btn-outline btn-sm sc-again" onClick={onReset}>Send another enquiry</button>}
+      {onReset && <button type="button" className="sc-again" onClick={onReset}><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5" /></svg> Send another enquiry</button>}
     </div>
   );
 }

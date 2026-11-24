@@ -25,7 +25,10 @@ app.use(helmet({
     }
   }
 }));
-app.use(express.json({ limit: "100kb" }));
+/* JSON bodies stay small everywhere except the logo upload, which carries an image. */
+const jsonSmall = express.json({ limit: "100kb" });
+const jsonLogo = express.json({ limit: "1500kb" });
+app.use((req, res, next) => (req.path === "/api/admin/settings/logo" ? jsonLogo : jsonSmall)(req, res, next));
 
 /* If the host is missing required settings, answer every API call with a clear message
    instead of crashing (shows up in Vercel logs and at /api/health). */
