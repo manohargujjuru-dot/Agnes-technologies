@@ -229,3 +229,21 @@ html[data-theme="dark"] .person a:hover { color: #ff8f84; }
   .wa-link { min-height: 36px; display: inline-flex; align-items: center; padding: 6px 14px; }
 }
 .tabs.admin-tabs { margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+.admin-brand .logo-mark, .login-brand .logo-mark { border-color: transparent; }
+.admin-brand > div, .login-brand > div { display: flex; flex-direction: column; justify-content: center; }
+
+/* ================= Admin on phones: slightly more compact ================= */
+@media (max-width: 640px) {
+  .admin-head h1 { font-size: 1.5rem; }
+  .admin-head .btn { min-height: 42px; }
+  .icon-btn, .row-actions .icon-btn { height: 38px; }
+  .icon-btn { width: 38px; }
+  .stat-card { padding: 14px; gap: 12px; }
+  .stat-icon { width: 42px; height: 42px; }
+  .stat-card strong { font-size: 1.35rem; }
+  .status-toggle { min-height: 32px; padding: 5px 12px; }
+  .panel { padding: 16px; }
+  .admin-top { padding: 10px 14px; }
+  .login-card { padding: 24px 18px; gap: 14px; }
+  .data-table tr { padding: 14px; gap: 8px 14px; }
+}

@@ -71,7 +71,7 @@ export function AdminLogin() {
     <div className="admin-login">
       <ThemeToggle />
       <form className="login-card" onSubmit={submit} noValidate>
-        <div className="login-brand"><LogoMark height={52} /><div><strong>{settings.shortName || "Agnes"}</strong><span>Admin Portal</span></div></div>
+        <div className="login-brand"><LogoMark size={52} /><div><strong>{settings.shortName || "Agnes"}</strong><span>Admin Portal</span></div></div>
         <h1>Sign in</h1>
         <p className="muted small">Manage courses, batches and enquiries.</p>
         <div className="field">
@@ -97,7 +97,7 @@ function AuthCard({ title, children }) {
     <div className="admin-login">
       <ThemeToggle />
       <div className="login-card">
-        <div className="login-brand"><LogoMark height={52} /><div><strong>{settings.shortName || "Agnes"}</strong><span>Admin Portal</span></div></div>
+        <div className="login-brand"><LogoMark size={52} /><div><strong>{settings.shortName || "Agnes"}</strong><span>Admin Portal</span></div></div>
         <h1>{title}</h1>
         {children}
         <Link to="/admin/login" className="back-link">← Back to sign in</Link>
@@ -242,7 +242,7 @@ export function AdminLayout() {
   return (
     <div className="admin">
       <aside id="admin-side" className={`admin-side ${open ? "open" : ""}`}>
-        <div className="admin-brand"><LogoMark height={34} tile /><div><strong>{settings.shortName || "Agnes"}</strong><span>Admin</span></div></div>
+        <div className="admin-brand"><LogoMark size={40} /><div><strong>{settings.shortName || "Agnes"}</strong><span>Admin</span></div></div>
         <nav aria-label="Admin">
           {links.map(l => l.section ? <span className="nav-section" key={l.section}>{l.section}</span> : (
             <NavLink key={l.to} to={l.to} end={l.end} onClick={() => setOpen(false)}>

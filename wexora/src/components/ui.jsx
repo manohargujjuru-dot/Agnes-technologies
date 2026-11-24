@@ -52,12 +52,13 @@ export function Icon({ name, size = 22, ...rest }) {
 
 /* ---------- Brand logo (public/logo.webp, transparent PNG fallback) ----------
    `tile` puts it on a white rounded tile so the navy parts stay visible on dark backgrounds. */
-export function LogoMark({ height = 44, tile = false }) {
+/* Square brand mark: the logo centred on a white rounded-square tile (looks right on light and dark backgrounds). */
+export function LogoMark({ size }) {
   return (
-    <span className={`logo-mark ${tile ? "on-tile" : ""}`} style={{ "--logo-h": `${height}px` }} aria-hidden="true">
+    <span className="logo-mark" style={size ? { "--logo-size": `${size}px` } : undefined} aria-hidden="true">
       <picture>
-        <source srcSet="/logo.webp" type="image/webp" />
-        <img src="/logo.png" alt="" width="480" height="303" decoding="async" />
+        <source srcSet="/logo-square.webp" type="image/webp" />
+        <img src="/logo-square.png" alt="" width="192" height="192" decoding="async" />
       </picture>
     </span>
   );
@@ -68,7 +69,7 @@ export function Logo({ light = false, to = "/" }) {
   const [first, ...rest] = (settings.name || "Agnes Technologies").split(" ");
   return (
     <Link to={to} className={`logo ${light ? "logo-light" : ""}`} aria-label={`${settings.name} home`}>
-      <LogoMark tile={light} height={light ? 40 : 44} />
+      <LogoMark />
       <span className="logo-text">
         <strong>{settings.shortName || first}</strong>
         {rest.length > 0 && <small>{rest.join(" ")}</small>}

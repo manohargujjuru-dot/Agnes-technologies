@@ -83,8 +83,6 @@ p { margin: 0 0 1em; }
 /* ================= Logo ================= */
 .logo { display: flex; align-items: center; gap: 10px; color: var(--ink); }
 .logo:hover { color: var(--ink); }
-.logo-mark { flex-shrink: 0; filter: drop-shadow(0 4px 10px rgba(25, 40, 65, .25)); transition: transform .3s; }
-.logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
 .logo-text { display: flex; flex-direction: column; line-height: 1; }
 .logo-text strong { font-family: var(--font-head); font-weight: 800; font-size: 1.35rem; letter-spacing: -.02em; }
 .logo-text small { font-size: .62rem; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: var(--red); margin-top: 4px; }
@@ -561,14 +559,6 @@ input, select, textarea, button { font-family: inherit; }
 .align-with-fields { margin-top: 32px; }
 @media (max-width: 640px) { .align-with-fields { margin-top: 0; } }
 
-/* ================= Brand logo image ================= */
-.logo-mark { display: inline-flex; align-items: center; flex-shrink: 0; height: var(--logo-h, 44px); filter: none; }
-.logo-mark img { height: 100%; width: auto; display: block; }
-.logo-mark.on-tile { background: #fff; border-radius: 12px; padding: 5px 8px; height: calc(var(--logo-h, 40px) + 10px); box-shadow: 0 4px 14px rgba(0, 0, 0, .25); }
-.logo:hover .logo-mark { transform: none; }
-.logo:hover .logo-mark img { transform: scale(1.04); }
-.logo-mark img { transition: transform .3s; }
-@media (max-width: 380px) { .site-header .logo-mark { --logo-h: 38px !important; } }
 
 /* ================= Animated burger ================= */
 .burger { display: none; position: relative; width: 46px; height: 46px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); cursor: pointer; z-index: 140; transition: background .25s, border-color .25s; }
@@ -627,9 +617,6 @@ input, select, textarea, button { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .nav-drawer, .nav-backdrop, .burger span, .nav-drawer .nav-menu > li { transition: none !important; }
 }
-.logo-mark picture { display: block; height: 100%; }
-.logo-mark img { height: var(--logo-h, 44px); width: auto; max-width: none; }
-.logo-mark.on-tile img { height: var(--logo-h, 40px); }
 
 /* =====================================================================
    DARK THEME — html[data-theme="dark"] (set by public/theme-init.js + toggle)
@@ -709,9 +696,6 @@ html[data-theme="dark"] .tech-logo:not(.has-img) { background: var(--red); borde
 html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
   transition: background-color .35s ease, border-color .35s ease, color .25s ease !important;
 }
-/* dark: give the header / login logo a white tile so the navy "W" stays visible */
-html[data-theme="dark"] .logo-mark:not(.on-tile) { background: #fff; border-radius: 10px; padding: 4px 7px; height: calc(var(--logo-h, 44px) + 8px); }
-html[data-theme="dark"] .logo-mark:not(.on-tile) img { height: calc(var(--logo-h, 44px) - 2px); }
 
 /* ================= Navbar: full width so the theme button sits in the corner ================= */
 @media (min-width: 961px) {
@@ -730,3 +714,75 @@ html[data-theme="dark"] .logo-mark:not(.on-tile) img { height: calc(var(--logo-h
 }
 /* land the course list just below the sticky header */
 #catalogue { scroll-margin-top: 84px; }
+
+/* ================= Logo: square tile + name, side by side ================= */
+.logo { display: inline-flex; align-items: center; gap: 12px; --logo-size: 46px; }
+.logo-mark {
+  width: var(--logo-size, 46px); height: var(--logo-size, 46px); flex-shrink: 0;
+  display: grid; place-items: center; padding: 3px;
+  background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(25, 40, 65, .08); filter: none; transition: transform .3s, box-shadow .3s;
+}
+.logo-mark picture { display: block; width: 100%; height: 100%; }
+.logo-mark img { width: 100%; height: 100%; object-fit: contain; display: block; max-width: none; }
+.logo:hover .logo-mark { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(25, 40, 65, .14); }
+/* name block sized to match the square: two lines, vertically centred */
+.logo-text { display: flex; flex-direction: column; justify-content: center; height: var(--logo-size, 46px); line-height: 1.1; }
+.logo-text strong { font-size: 1.38rem; line-height: 1.1; }
+.logo-text small { font-size: .62rem; line-height: 1.2; margin-top: 3px; letter-spacing: .24em; }
+.logo-light .logo-mark, html[data-theme="dark"] .logo-mark { border-color: transparent; box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
+@media (max-width: 640px) {
+  .logo { gap: 10px; --logo-size: 40px; }
+  .logo-mark { border-radius: 10px; padding: 2px; }
+  .logo-text strong { font-size: 1.18rem; }
+  .logo-text small { font-size: .56rem; letter-spacing: .2em; margin-top: 2px; }
+}
+@media (max-width: 360px) {
+  .logo { --logo-size: 36px; gap: 8px; }
+  .logo-text strong { font-size: 1.08rem; }
+}
+
+/* ================= Phones: slightly more compact controls (≤ 640px only) ================= */
+@media (max-width: 640px) {
+  /* buttons */
+  .btn { padding: 10px 18px; font-size: .9rem; min-height: 42px; border-radius: 10px; gap: 6px; }
+  .btn-sm { padding: 7px 14px; font-size: .84rem; min-height: 36px; border-radius: 9px; }
+  .course-actions .btn { padding-top: 9px; padding-bottom: 9px; }
+  .hero .btn-row, .page-banner .btn-row { gap: 10px; }
+  /* form fields — text stays 16px so iPhones don't zoom on tap */
+  .field input, .field select, .search-box input, .filter-select { min-height: 44px; padding-top: 9px; padding-bottom: 9px; }
+  .field input, .field textarea { padding-left: 12px; padding-right: 12px; }
+  .field select, .filter-select { padding-left: 12px; }
+  .search-box input { padding-left: 40px; }
+  .field textarea { min-height: 96px; }
+  .field label { font-size: .84rem; margin-bottom: 5px; }
+  .form-grid { gap: 14px; }
+  .form-card { padding: 20px 16px; border-radius: 16px; }
+  .checkbox { font-size: .84rem; }
+  .checkbox input { width: 20px !important; height: 20px; }
+  .password-toggle { width: 40px; height: 40px; }
+  /* header controls */
+  .burger, .theme-toggle { width: 42px; height: 42px; }
+  .burger span { left: 11px; right: 11px; }
+  .burger span:nth-child(1) { top: 13px; }
+  .burger span:nth-child(2) { top: 19.5px; }
+  .burger span:nth-child(3) { top: 26px; }
+  .burger.is-open span:nth-child(1), .burger.is-open span:nth-child(3) { top: 19.5px; }
+  .nav-cta { gap: 8px; }
+  .nav { height: 66px; }
+  /* tabs, cards, sections */
+  .tab { padding: 7px 14px; font-size: .85rem; min-height: 38px; }
+  .card { padding: 18px; }
+  .icon-box { width: 48px; height: 48px; margin-bottom: 14px; }
+  .tool-card { padding: 14px 8px; }
+  .tech-logo.lg { width: 72px; height: 72px; padding: 12px; }
+  .section { padding: 48px 0; }
+  .section-head { margin-bottom: 28px; }
+  .hero h1, .page-banner h1 { font-size: clamp(1.7rem, 7.4vw, 2.1rem); }
+  .eyebrow { font-size: .72rem; padding: 5px 10px; margin-bottom: 12px; }
+  .contact-card .icon-box { margin-bottom: 10px; }
+  .drawer-head { height: 66px; }
+  .nav-drawer .nav-menu a, .nav-drawer .nav-menu .nav-link { min-height: 46px; padding: 12px 14px; font-size: 1rem; }
+}
+.logo-mark { padding: 2px; }
+@media (max-width: 640px) { .logo-mark { padding: 1px; } }
