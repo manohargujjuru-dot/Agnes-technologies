@@ -292,3 +292,8 @@ html[data-theme="dark"] .person a:hover { color: #ff8f84; }
 .lm-sizes > span { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .lm-sizes em { font-style: normal; font-size: .72rem; color: #8a96ad; }
 @media (max-width: 860px) { .lm-grid { grid-template-columns: 1fr; } }
+.lm-info { padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(58, 155, 203, .35); background: rgba(58, 155, 203, .07); }
+.lm-info ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 5px; font-size: .84rem; line-height: 1.45; color: var(--text); }
+.lm-info li::marker { color: #3A9BCB; }
+.lm-info strong { color: var(--ink); }
+.lm-info em { font-style: normal; color: var(--muted); }

@@ -11,7 +11,7 @@ const nameOf = (list, id) => list.find(c => c.id === id)?.name || id;
 
 export function useToast() {
   const [toast, setToast] = useState(null);
-  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 3000); return () => clearTimeout(t); }, [toast]);
+  useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(null), 2000); return () => clearTimeout(t); }, [toast]);
   const show = useCallback((text, error = false) => setToast({ text, error }), []);
   return [toast, show];
 }

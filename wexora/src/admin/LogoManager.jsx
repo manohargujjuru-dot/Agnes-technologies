@@ -9,21 +9,43 @@ const OUT = 512;            // every logo is normalised to a 512×512 square (sh
 const PAD = 0.04;           // breathing room around the artwork, same as the built-in logo
 const MAX_FILE = 8 * 1024 * 1024;
 const TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+xml", "image/gif"];
+const EXT = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", svg: "image/svg+xml", gif: "image/gif" };
+const UNSUPPORTED = { heic: "HEIC (iPhone photo)", heif: "HEIF", avif: "AVIF", bmp: "BMP", tif: "TIFF", tiff: "TIFF", ico: "ICO", pdf: "PDF", psd: "Photoshop", ai: "Illustrator", eps: "EPS", cdr: "CorelDRAW" };
+const ACCEPT = [...TYPES, ".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif"].join(",");
+
+/** Read the file as a data: URL — the site's security policy allows data: images but blocks blob: URLs. */
+const readAsDataUrl = file => new Promise((ok, fail) => {
+  const r = new FileReader();
+  r.onload = () => ok(String(r.result));
+  r.onerror = () => fail(new Error("The file couldn't be opened — try saving it again or choose another file."));
+  r.readAsDataURL(file);
+});
+
+/** Work out the real image type; phones sometimes send files with an empty type. */
+function detectType(file) {
+  const ext = (file.name.split(".").pop() || "").toLowerCase();
+  if (UNSUPPORTED[ext]) throw new Error(`${UNSUPPORTED[ext]} files aren't supported. Save the logo as PNG, JPG, WebP or SVG and try again.`);
+  const type = TYPES.includes(file.type) ? file.type : EXT[ext];
+  if (!type) throw new Error("Unsupported file. Use a PNG, JPG, WebP, SVG or GIF image.");
+  return type;
+}
 
 const loadImage = src => new Promise((ok, fail) => {
   const img = new Image();
   img.onload = () => ok(img);
-  img.onerror = () => fail(new Error("That image couldn't be read — try a different file."));
+  img.onerror = () => fail(new Error("This image file looks damaged or isn't really an image. Open it in an image editor, save it as PNG, and try again."));
   img.src = src;
 });
 
 /** Trim transparent / near-white margins, then centre the artwork on a 512×512 transparent square. */
 async function normaliseLogo(file) {
-  if (!TYPES.includes(file.type)) throw new Error("Choose a PNG, JPG, WebP, SVG or GIF image.");
-  if (file.size > MAX_FILE) throw new Error("That file is larger than 8 MB.");
-  const url = URL.createObjectURL(file);
-  try {
-    const img = await loadImage(url);
+  const type = detectType(file);
+  if (!file.size) throw new Error("That file is empty.");
+  if (file.size > MAX_FILE) throw new Error(`That file is ${(file.size / 1048576).toFixed(1)} MB — the limit is 8 MB.`);
+  let src = await readAsDataUrl(file);
+  if (!src.startsWith(`data:${type}`)) src = src.replace(/^data:[^;,]*/, `data:${type}`); // fix missing/wrong MIME from phones
+  {
+    const img = await loadImage(src);
     const nw = img.naturalWidth || 1024, nh = img.naturalHeight || 1024;
     const scale = Math.min(1, 2000 / Math.max(nw, nh));
     const w = Math.max(1, Math.round(nw * scale)), h = Math.max(1, Math.round(nh * scale));
@@ -62,8 +84,6 @@ async function normaliseLogo(file) {
     const bytes = Math.round((data.length - data.indexOf(",") - 1) * 0.75);
     if (bytes > 1024 * 1024) throw new Error("The processed logo is still over 1 MB — try a simpler image.");
     return { data, bytes, source: { w: nw, h: nh }, lowRes: Math.max(cw / scale, ch / scale) < 256 };
-  } finally {
-    URL.revokeObjectURL(url);
   }
 }
 
@@ -150,9 +170,9 @@ export default function LogoManager() {
           <p className="muted small">
             {pending
               ? `Optimised to ${OUT}×${OUT} · ${kb(pending.bytes)} · from ${pending.source.w}×${pending.source.h}`
-              : "PNG, JPG, WebP or SVG · square or wide · up to 8 MB. Margins are trimmed and the logo is centred automatically."}
+              : "or click “Upload logo” to choose a file"}
           </p>
-          <input ref={fileRef} type="file" accept={TYPES.join(",")} hidden onChange={e => pick(e.target.files?.[0])} />
+          <input ref={fileRef} type="file" accept={ACCEPT} hidden onChange={e => pick(e.target.files?.[0])} />
           <div className="lm-actions">
             {pending ? (
               <>
@@ -173,6 +193,17 @@ export default function LogoManager() {
         </div>
 
         <div className="lm-previews">
+          <div className="lm-info">
+            <p className="lm-label">Which images can be uploaded</p>
+            <ul>
+              <li><strong>Formats:</strong> PNG <em>(best)</em>, SVG, WebP, JPG/JPEG, GIF <em>(first frame)</em></li>
+              <li><strong>Not supported:</strong> HEIC/HEIF (iPhone photos), AVIF, BMP, TIFF, ICO, PDF, PSD, AI, EPS — save as PNG first</li>
+              <li><strong>File size:</strong> up to 8 MB</li>
+              <li><strong>Dimensions:</strong> any shape — square or wide. At least 512 × 512 px recommended for sharp results (smaller images still work but may look soft)</li>
+              <li><strong>Background:</strong> transparent or plain white works best — white margins are removed automatically</li>
+              <li><strong>What happens:</strong> the logo is trimmed, centred and saved as a 512 × 512 image, so it shows at the same size and quality everywhere</li>
+            </ul>
+          </div>
           <p className="lm-label">{pending ? "Preview — not saved yet" : "Where it appears"}</p>
           <div className="lm-preview lm-light">
             <span className="lm-tag">Website navbar</span>

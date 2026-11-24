@@ -71,7 +71,7 @@ export function AlertProvider({ children }) {
 
   const push = useCallback((type, title, message = "", opts = {}) => {
     const id = ++seq;
-    const duration = opts.duration ?? { success: 3000, info: 3500, warning: 4000, error: 6000 }[type];
+    const duration = opts.duration ?? { success: 2000, info: 2200, warning: 2500, error: 3500 }[type];
     setAlerts(list => [...list, { id, type, title, message, duration, action: opts.action }].slice(-MAX));
     return id;
   }, []);
