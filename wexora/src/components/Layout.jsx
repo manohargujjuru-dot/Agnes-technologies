@@ -26,7 +26,6 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [drop, setDrop] = useState(null);
   const [scrolled, setScrolled] = useState(false);
-  const [navUp, setNavUp] = useState(false);
   const { pathname, search } = useLocation();
 
   const nav = useMemo(() => [
@@ -45,7 +44,7 @@ function Header() {
     setOpen(false);
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
-  useEffect(() => { setOpen(false); setDrop(null); setNavUp(false); }, [pathname, search]);
+  useEffect(() => { setOpen(false); setDrop(null); }, [pathname, search]);
   // Click/tap anywhere outside an open dropdown closes it
   useEffect(() => {
     if (!drop) return;
@@ -54,25 +53,8 @@ function Header() {
     return () => document.removeEventListener("pointerdown", onDown);
   }, [drop]);
   useEffect(() => {
-    /* scrolled: compact header · navUp: scrolling back up → header switches to the brand navy;
-       scrolling down (or back at the very top) → normal white header */
-    /* Direction is measured over a deliberate distance (not every pixel) so tiny trackpad /
-       touch movements and iOS bounce never make the colour flicker. */
-    let last = Math.max(0, window.scrollY), travel = 0, ticking = false;
-    const update = () => {
-      ticking = false;
-      const y = Math.max(0, window.scrollY);
-      const d = y - last;
-      last = y;
-      setScrolled(y > 8);
-      if (y < 120) { travel = 0; setNavUp(false); return; }          // near the top → standard header
-      if (!d) return;
-      if (Math.sign(d) !== Math.sign(travel)) travel = 0;             // direction changed → start measuring again
-      travel += d;
-      if (travel <= -40) setNavUp(true);                              // scrolled up ≥ 40px → navy
-      else if (travel >= 12) setNavUp(false);                         // scrolled down → standard
-    };
-    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    // scrolled: soft shadow + slightly compact header (the colour always stays the same)
+    const onScroll = () => setScrolled(window.scrollY > 8);
     const onKey = e => { if (e.key === "Escape") { setOpen(false); setDrop(null); } };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -92,7 +74,7 @@ function Header() {
   }, []);
 
   return (
-    <header className={`site-header ${scrolled ? "scrolled" : ""} ${navUp && !open ? "nav-up" : ""} ${open ? "drawer-open" : ""}`}>
+    <header className={`site-header ${scrolled ? "scrolled" : ""} ${open ? "drawer-open" : ""}`}>
       <div className="container nav">
         <Logo />
         <div className={`nav-backdrop ${open ? "show" : ""}`} onClick={() => setOpen(false)} aria-hidden="true" />

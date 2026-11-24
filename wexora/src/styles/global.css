@@ -1,9 +1,9 @@
-/* ================= Design tokens — Navy #192841 + Red #D21404 ================= */
+/* ================= Design tokens — Blue #1A3B8F (backgrounds) · Navy #192841 (text) · Red #D21404 ================= */
 :root {
-  --navy: #192841;
-  --navy-700: #24395c;
-  --navy-800: #1f3050;
-  --navy-900: #0f1a2e;
+  --navy: #1A3B8F;          /* brand blue — backgrounds */
+  --navy-700: #2347a3;
+  --navy-800: #17347e;
+  --navy-900: #122a68;
   --navy-50: #eef2f8;
   --red: #D21404;
   --red-600: #b01103;

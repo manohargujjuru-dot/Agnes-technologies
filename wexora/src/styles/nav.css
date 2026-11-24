@@ -2,35 +2,18 @@
    NAVBAR UPGRADE + content bullets/tags (loaded after effects.css)
    ===================================================================== */
 
-/* ---------- Header: compact on scroll, brand navy when scrolling back up ---------- */
-/* The navy layer sits behind the header content and simply fades in/out (gradients can't be
-   transitioned directly, which made the colour "snap"). Text and buttons cross-fade with it. */
-.site-header { transition: box-shadow .4s ease, border-color .4s ease; }
-.site-header::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(90deg, var(--hero-1), var(--hero-2)); opacity: 0; transition: opacity .4s ease; }
-.site-header.nav-up::before { opacity: 1; }
+/* ---------- Header: slightly compact once you scroll (colour stays the same) ---------- */
+.site-header { transition: box-shadow .3s ease, border-color .3s ease; }
 .site-header .nav { position: relative; transition: height .3s ease; }
 .site-header .logo, .site-header .logo-text small, .site-header .nav-menu > li > a, .site-header .nav-menu .nav-link,
 .site-header .theme-toggle, .site-header .burger, .site-header .burger span {
   transition: color .4s ease, background-color .4s ease, border-color .4s ease, height .3s ease; }
 @media (min-width: 961px) { .site-header.scrolled .nav { height: 64px; } }
 
-.site-header.nav-up { border-color: transparent; box-shadow: 0 10px 30px rgba(15, 26, 46, .28); }
-.site-header.nav-up .logo, .site-header.nav-up .logo:hover { color: #fff; }
-.site-header.nav-up .logo-text small { color: #ff8a7d; }
-.site-header.nav-up .theme-toggle, .site-header.nav-up .burger {
-  background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .22); color: #fff; }
-.site-header.nav-up .burger span { background: #fff; }
-.site-header.nav-up .theme-toggle:hover { background: rgba(255, 255, 255, .2); color: #fff; }
-
 /* desktop links */
 @media (min-width: 961px) {
   .nav-menu > li > a, .nav-menu .nav-link { transition: color .2s, background .2s; }
   .nav-menu > li > a:hover, .nav-menu .nav-link:hover { background: var(--navy-50); }
-  .site-header.nav-up .nav-menu > li > a, .site-header.nav-up .nav-menu .nav-link { color: rgba(255, 255, 255, .88); }
-  .site-header.nav-up .nav-menu > li > a:hover, .site-header.nav-up .nav-menu .nav-link:hover { color: #fff; background: rgba(255, 255, 255, .1); }
-  .site-header.nav-up .nav-menu > li > a.active, .site-header.nav-up .nav-menu .nav-link.active { color: #fff; }
-  .site-header.nav-up .nav-menu > li > a::after, .site-header.nav-up .nav-menu .nav-link::after { background: var(--gold); }
 }
 
 /* dropdowns: chevron flips, items slide in, hover accent bar */
