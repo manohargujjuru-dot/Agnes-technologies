@@ -1,10 +1,12 @@
-/* ================= Design tokens — Blue #1A3B8F (backgrounds) · Navy #192841 (text) · Red #D21404 ================= */
+/* ================= Design tokens — Ocean gradient #3A9BCB → #22618F → #0B2556 (backgrounds) · Navy #192841 (text) · Red #D21404 ================= */
 :root {
-  --navy: #1A3B8F;          /* brand blue — backgrounds */
-  --navy-700: #2347a3;
-  --navy-800: #17347e;
-  --navy-900: #122a68;
-  --navy-50: #eef2f8;
+  --navy: #22618F;          /* brand ocean blue — backgrounds (mid of gradient) */
+  --sky: #3A9BCB;           /* gradient start (light) */
+  --brand-gradient: linear-gradient(90deg, #3A9BCB 0%, #22618F 50%, #0B2556 100%);
+  --navy-700: #2C7DB3;
+  --navy-800: #16406F;
+  --navy-900: #0B2556;
+  --navy-50: #e8f3f9;
   --red: #D21404;
   --red-600: #b01103;
   --red-50: #fdecea;
@@ -108,7 +110,7 @@ p { margin: 0 0 1em; }
 
 /* ================= Hero (navy) ================= */
 .hero { position: relative; overflow: hidden; padding: 96px 0 110px; background: var(--navy); color: #fff; }
-.hero-bg { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 70% at 85% 20%, rgba(210, 20, 4, .22), transparent 60%), radial-gradient(50% 60% at 0% 100%, rgba(80, 120, 190, .35), transparent 70%), linear-gradient(160deg, var(--navy) 0%, var(--navy-900) 100%); }
+.hero-bg { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 70% at 85% 20%, rgba(210, 20, 4, .22), transparent 60%), radial-gradient(50% 60% at 0% 100%, rgba(58, 155, 203, .35), transparent 70%), var(--brand-gradient); }
 .hero-bg::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 80%); }
 .blob { position: absolute; border-radius: 50%; filter: blur(60px); animation: drift 18s ease-in-out infinite alternate; }
 .blob.b1 { width: 320px; height: 320px; background: rgba(210, 20, 4, .35); top: -100px; right: 8%; }
@@ -145,7 +147,7 @@ p { margin: 0 0 1em; }
 .card-in { animation: fadeUp .5s cubic-bezier(.2, .7, .2, 1) both; opacity: 0; transform: translateY(18px); }
 
 /* ================= Page banner (navy) ================= */
-.page-banner { position: relative; overflow: hidden; padding: 60px 0 72px; background: linear-gradient(160deg, var(--navy) 0%, var(--navy-900) 100%); color: #fff; }
+.page-banner { position: relative; overflow: hidden; padding: 60px 0 72px; background: var(--brand-gradient); color: #fff; }
 .banner-shapes span { position: absolute; border-radius: 50%; }
 .banner-shapes span:first-child { width: 380px; height: 380px; right: -100px; top: -160px; background: radial-gradient(circle, rgba(210, 20, 4, .35), transparent 70%); }
 .banner-shapes span:last-child { width: 300px; height: 300px; left: -120px; bottom: -160px; border: 1px solid rgba(255, 255, 255, .08); }
@@ -234,7 +236,7 @@ p { margin: 0 0 1em; }
 .step p { font-size: .86rem; color: var(--muted); margin: 0; }
 
 /* Mission / vision */
-.mv-card { padding: 40px; border-radius: 20px; color: #fff; background: linear-gradient(135deg, var(--navy), var(--navy-900)); position: relative; overflow: hidden; }
+.mv-card { padding: 40px; border-radius: 20px; color: #fff; background: var(--brand-gradient); position: relative; overflow: hidden; }
 .mv-card.red { background: linear-gradient(135deg, var(--red), #8f0d02); }
 .mv-card::after { content: ""; position: absolute; width: 200px; height: 200px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .15); right: -60px; bottom: -80px; }
 .mv-card p { color: rgba(255, 255, 255, .88); margin: 0; }

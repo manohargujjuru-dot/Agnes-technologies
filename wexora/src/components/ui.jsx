@@ -223,7 +223,7 @@ function applyTheme(theme, remember) {
   const root = document.documentElement;
   root.classList.add("theme-anim");
   root.setAttribute("data-theme", theme);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#0a1120" : "#1A3B8F");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "dark" ? "#0a1120" : "#22618F");
   if (remember) { try { localStorage.setItem(THEME_KEY, theme); } catch { /* ignore */ } }
   window.dispatchEvent(new Event("agnes-theme"));
   setTimeout(() => root.classList.remove("theme-anim"), 450);

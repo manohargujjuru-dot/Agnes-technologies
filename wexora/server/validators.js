@@ -1,12 +1,11 @@
 /* Server-side validation. Every write goes through one of these; they return { errors, value }. */
 import { LOGOS } from "../src/data/logos.js";
 import { IMAGES } from "../src/data/images.js";
+import { formatPhone, normalizeEmail, validateEmail, validatePhone } from "../src/utils/validation.js";
 import { BATCH_STATUSES, ENQUIRY_KINDS, FORM_KINDS, LEVELS, MODES, SERVICE_ICONS } from "../src/data/constants.js";
 
 const str = (v, max = 500) => (v == null ? "" : String(v).trim().slice(0, max));
 const list = (v, maxItems, maxLen = 200) => (Array.isArray(v) ? v : []).map(x => str(x, maxLen)).filter(Boolean).slice(0, maxItems);
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PHONE = /^[+]?[\d\s()-]{7,20}$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const SLUG = /^[a-z0-9-]+$/;
 const URL_RE = /^https:\/\/[^\s]+$/;
@@ -85,14 +84,16 @@ export function validateEnquiry(input = {}) {
     kind: ENQUIRY_KINDS.includes(input.kind) ? input.kind : "general",
     source: str(input.source, 120),
     name: str(input.name, 100),
-    email: str(input.email, 160).toLowerCase(),
+    email: normalizeEmail(str(input.email, 160)),
     phone: str(input.phone, 30),
     payload: {}
   };
   ENQUIRY_FIELDS.forEach(k => { const v = str(input[k], k === "message" ? 5000 : 300); if (v) e.payload[k] = v; });
   if (!e.name) errors.name = "Name is required.";
-  if (!EMAIL.test(e.email)) errors.email = "A valid email address is required.";
-  if (e.phone && !PHONE.test(e.phone)) errors.phone = "Invalid phone number.";
+  if (!e.email) errors.email = "A valid email address is required.";
+  else { const m = validateEmail(e.email); if (m) errors.email = m; }
+  const pm = validatePhone(e.phone);
+  if (pm) errors.phone = pm; else e.phone = formatPhone(e.phone);
   if (input.consent !== true) errors.consent = "Consent is required.";
   return { errors, value: e };
 }
@@ -165,8 +166,8 @@ export function validateSettings(input = {}) {
   };
   if (!s.name) errors.name = "Company name is required.";
   if (!s.shortName) s.shortName = s.name.split(" ")[0];
-  if (s.email && !EMAIL.test(s.email)) errors.email = "Enter a valid email address.";
-  if (s.phone && !PHONE.test(s.phone)) errors.phone = "Enter a valid phone number.";
+  if (s.email) { const m = validateEmail(s.email); if (m) errors.email = m; }
+  if (s.phone) { const m = validatePhone(s.phone); if (m) errors.phone = m; }
   for (const [k, v] of Object.entries(s.social)) if (v && !URL_RE.test(v)) errors[`social.${k}`] = "Use a full https:// link.";
   return { errors, value: s };
 }

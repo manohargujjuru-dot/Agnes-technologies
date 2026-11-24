@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { LEVELS } from "../data/constants.js";
 import { useData } from "../context/DataContext.jsx";
+import { formatPhone, sanitizePhoneInput, suggestEmail, validateEmail, validatePhone } from "../utils/validation.js";
+import { SuccessCard, useAlert } from "./Alerts.jsx";
 
 const BUDGET = ["Under 1,000", "1,000 – 5,000", "5,000 – 15,000", "15,000+", "Not sure yet"];
 const TIMELINE = ["ASAP", "1–3 months", "3–6 months", "Flexible"];
@@ -74,8 +76,8 @@ function buildFields(kind, courseOpts, areaOpts) {
 function validate(field, value) {
   if (field.req && (field.type === "consent" ? !value : !String(value ?? "").trim()))
     return field.type === "consent" ? "Please accept to continue." : "This field is required.";
-  if (value && field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) return "Please enter a valid email address.";
-  if (value && field.type === "tel" && !/^[+]?[\d\s()-]{7,18}$/.test(value)) return "Please enter a valid phone number.";
+  if (value && field.type === "email") return validateEmail(value);
+  if (value && field.type === "tel") return validatePhone(value);
   return "";
 }
 
@@ -94,13 +96,26 @@ export default function EnquiryForm({ kind = "general", initial = {}, submitLabe
   const [status, setStatus] = useState("idle"); // idle | invalid | sending | success | error
   const [serverMsg, setServerMsg] = useState("");
   const [honeypot, setHoneypot] = useState("");
+  const [touched, setTouched] = useState({});
+  const [reference, setReference] = useState("");
+  const alert = useAlert();
 
   const visible = fl => !fl.when || values[fl.when[0]] === fl.when[1];
   const set = (name, v) => {
+    const fl = fields.find(x => x.name === name);
+    if (fl?.type === "tel") v = sanitizePhoneInput(v);
+    if (fl?.type === "email") v = v.replace(/\s/g, "");
     setValues(s => ({ ...s, [name]: v }));
-    if (errors[name]) setErrors(e => ({ ...e, [name]: validate(fields.find(x => x.name === name), v) }));
+    // live re-validation once a field has been visited (or already shows an error)
+    if (errors[name] || touched[name]) setErrors(e => ({ ...e, [name]: validate(fl, v) }));
   };
-  const blur = fl => setErrors(e => ({ ...e, [fl.name]: validate(fl, values[fl.name]) }));
+  const blur = fl => {
+    let v = values[fl.name];
+    if (fl.type === "tel" && v && !validatePhone(v)) { v = formatPhone(v); setValues(s => ({ ...s, [fl.name]: v })); }
+    setTouched(t => ({ ...t, [fl.name]: true }));
+    setErrors(e => ({ ...e, [fl.name]: validate(fl, v) }));
+  };
+  const reset = () => { setValues({}); setErrors({}); setTouched({}); setReference(""); setStatus("idle"); };
 
   const submit = async e => {
     e.preventDefault();
@@ -110,6 +125,8 @@ export default function EnquiryForm({ kind = "general", initial = {}, submitLabe
     setErrors(errs);
     if (Object.keys(errs).length) {
       setStatus("invalid");
+      const names = Object.keys(errs).map(n => fields.find(x => x.name === n)?.label || "Consent");
+      alert.warning(`${names.length} field${names.length > 1 ? "s need" : " needs"} attention`, names.slice(0, 4).join(" · ") + (names.length > 4 ? " …" : ""));
       document.getElementById(`f-${kind}-${Object.keys(errs)[0]}`)?.focus();
       return;
     }
@@ -117,13 +134,20 @@ export default function EnquiryForm({ kind = "general", initial = {}, submitLabe
     const data = { kind, source, consent: true, website: honeypot };
     fields.filter(visible).forEach(fl => { if (fl.type !== "consent" && values[fl.name]) data[fl.name] = values[fl.name]; });
     try {
-      await submitEnquiry(data);
+      const res = await submitEnquiry(data);
+      const ref = res?.id != null ? `WX-${typeof res.id === "number" ? String(res.id).padStart(5, "0") : String(res.id).slice(0, 8).toUpperCase()}` : "";
+      const first = String(values.name || "").trim().split(" ")[0];
+      setReference(ref);
       setStatus("success");
-      setValues({});
+      setValues({}); setTouched({});
+      alert.success("Enquiry submitted successfully!", `Thanks${first ? `, ${first}` : ""} — our team will contact you within 24 hours.`);
     } catch (err) {
       if (err.details) setErrors(err.details); // server-side validation messages
       setServerMsg(err.message);
       setStatus("error");
+      alert.error("Submission failed", err.message || "Something went wrong sending your enquiry.", {
+        action: { label: "Try again", onClick: () => document.getElementById(`enq-submit-${kind}`)?.click() }
+      });
     }
   };
 
@@ -134,12 +158,22 @@ export default function EnquiryForm({ kind = "general", initial = {}, submitLabe
     </>
   );
 
+  if (status === "success") {
+    return (
+      <SuccessCard title="Enquiry submitted!" reference={reference} onReset={reset}>
+        <p>Thank you for reaching out. Your enquiry has been received — our team will get back to you within 24 hours.</p>
+      </SuccessCard>
+    );
+  }
+
   return (
     <form className="enquiry-form" noValidate onSubmit={submit}>
       <div className="form-grid">
         {fields.filter(visible).map(fl => {
           const id = `f-${kind}-${fl.name}`;
           const err = errors[fl.name];
+          const ok = !err && touched[fl.name] && (fl.type === "email" || fl.type === "tel") && !!values[fl.name];
+          const suggestion = fl.type === "email" && touched[fl.name] && !err ? suggestEmail(values[fl.name]) : "";
           const common = {
             id, name: fl.name, value: values[fl.name] ?? "", "aria-invalid": !!err,
             "aria-describedby": err ? `${id}-err` : undefined,
@@ -157,7 +191,7 @@ export default function EnquiryForm({ kind = "general", initial = {}, submitLabe
             );
           }
           return (
-            <div className={`field ${fl.type === "textarea" || fl.full ? "full" : ""} ${err ? "invalid" : ""}`} key={fl.name}>
+            <div className={`field ${fl.type === "textarea" || fl.full ? "full" : ""} ${err ? "invalid" : ""} ${ok ? "valid" : ""}`} key={fl.name}>
               <label htmlFor={id}>{label(fl)}</label>
               {fl.type === "select" ? (
                 <select {...common}>
@@ -167,17 +201,35 @@ export default function EnquiryForm({ kind = "general", initial = {}, submitLabe
               ) : fl.type === "textarea" ? (
                 <textarea {...common} placeholder={fl.ph} />
               ) : (
-                <input {...common} type={fl.type} placeholder={fl.ph} min={fl.type === "number" ? 1 : undefined}
-                  autoComplete={{ name: "name", email: "email", phone: "tel", org: "organization" }[fl.name]} />
+                <div className="input-wrap">
+                  <input {...common} type={fl.type} min={fl.type === "number" ? 1 : undefined}
+                    placeholder={fl.ph ?? { email: "name@example.com", tel: "+91 91234 56789" }[fl.type]}
+                    inputMode={{ email: "email", tel: "tel" }[fl.type]}
+                    maxLength={{ email: 254, tel: 22 }[fl.type]}
+                    autoCapitalize={fl.type === "email" ? "off" : undefined} spellCheck={fl.type === "email" ? false : undefined}
+                    autoComplete={{ name: "name", email: "email", phone: "tel", org: "organization" }[fl.name]} />
+                  {(fl.type === "email" || fl.type === "tel") && (ok || err) && (
+                    <span className={`field-state ${ok ? "is-ok" : "is-err"}`} aria-hidden="true">
+                      {ok ? <svg viewBox="0 0 24 24" width="18" height="18"><path d="M6 12.5l4 4L18 8" /></svg>
+                        : <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 7v6M12 16.5v.5" /></svg>}
+                    </span>
+                  )}
+                </div>
               )}
               {err && <span className="err" id={`${id}-err`} role="alert">{err}</span>}
+              {fl.type === "tel" && !err && !ok && <span className="hint">10-digit mobile, or +country code for international.</span>}
+              {suggestion && (
+                <button type="button" className="email-suggest" onClick={() => { set(fl.name, suggestion); setErrors(e => ({ ...e, [fl.name]: "" })); }}>
+                  Did you mean <strong>{suggestion}</strong>?
+                </button>
+              )}
             </div>
           );
         })}
       </div>
       <input type="text" className="hp" tabIndex={-1} autoComplete="off" aria-hidden="true" value={honeypot} onChange={e => setHoneypot(e.target.value)} />
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary" disabled={status === "sending"}>
+        <button type="submit" id={`enq-submit-${kind}`} className="btn btn-primary" disabled={status === "sending"}>
           {status === "sending" ? <><span className="spinner" /> Sending…</> : submitLabel}
         </button>
       </div>
@@ -189,7 +241,6 @@ export default function EnquiryForm({ kind = "general", initial = {}, submitLabe
             <button type="submit" className="btn btn-sm btn-outline" style={{ marginLeft: 10 }}>Retry</button>
           </div>
         )}
-        {status === "success" && <div className="form-status success">Thank you! Your enquiry has been received — our team will get back to you soon.</div>}
       </div>
     </form>
   );

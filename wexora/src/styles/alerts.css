@@ -1,0 +1,125 @@
+/* =====================================================================
+   Alerts · field validation states · success card
+   Palette follows the brand ocean gradient: #3A9BCB → #22618F → #0B2556
+   ===================================================================== */
+:root {
+  --al-grad: linear-gradient(90deg, #3A9BCB 0%, #22618F 50%, #0B2556 100%);
+  --al-success: #12a150;
+  --al-error: #D21404;
+  --al-warning: #e09b00;
+  --al-info: #3A9BCB;
+  --ok: #12a150;
+}
+
+/* ---------------- Toast stack ---------------- */
+.al-stack { position: fixed; top: 88px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 12px;
+  width: min(400px, calc(100vw - 32px)); pointer-events: none; }
+.al { --c: var(--al-info); position: relative; overflow: hidden; pointer-events: auto; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start;
+  padding: 16px 14px 18px 16px; border-radius: 16px; color: #fff;
+  background: linear-gradient(135deg, rgba(58, 155, 203, .97) 0%, rgba(34, 97, 143, .97) 50%, rgba(11, 37, 86, .98) 100%);
+  box-shadow: 0 18px 44px rgba(11, 37, 86, .35), 0 2px 6px rgba(11, 37, 86, .2), inset 0 1px 0 rgba(255, 255, 255, .18);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  animation: alIn .55s cubic-bezier(.2, 1.2, .3, 1) both; }
+.al::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c); box-shadow: 0 0 18px var(--c); }
+.al::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .16) 50%, transparent 70%); transform: translateX(-100%); animation: alShine 1.4s .35s ease-out both; }
+.al-success { --c: var(--al-success); }
+.al-error { --c: var(--al-error); animation: alIn .55s cubic-bezier(.2, 1.2, .3, 1) both, alShake .5s .5s both; }
+.al-warning { --c: var(--al-warning); }
+.al-info { --c: var(--al-info); }
+.al-out { animation: alOut .32s ease-in forwards !important; }
+
+.al-icon { position: relative; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--c); color: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .25); animation: alPop .5s .1s cubic-bezier(.2, 1.6, .4, 1) both; }
+.al-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--c); animation: alRing 1.6s .3s ease-out 2; opacity: 0; }
+.al-draw { stroke-dasharray: 30; stroke-dashoffset: 30; animation: alDraw .45s .35s ease-out forwards; }
+.al-d2 { animation-delay: .5s; }
+.al-dot { fill: currentColor; stroke: none; opacity: 0; animation: alFade .3s .55s forwards; }
+
+.al-body { min-width: 0; padding-top: 2px; }
+.al-title { display: block; font-family: var(--font-head, inherit); font-size: .98rem; font-weight: 700; letter-spacing: .01em; }
+.al-msg { margin: 4px 0 0; font-size: .87rem; line-height: 1.45; color: rgba(255, 255, 255, .86); overflow-wrap: anywhere; }
+.al-action { margin-top: 10px; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .45); background: rgba(255, 255, 255, .12);
+  color: #fff; font: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+.al-action:hover { background: rgba(255, 255, 255, .25); }
+.al-close { width: 30px; height: 30px; border-radius: 8px; border: 0; background: transparent; color: rgba(255, 255, 255, .75); cursor: pointer; display: grid; place-items: center; transition: background .2s, color .2s; }
+.al-close:hover, .al-close:focus-visible { background: rgba(255, 255, 255, .16); color: #fff; outline: none; }
+
+.al-progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; transform-origin: left; background: linear-gradient(90deg, var(--c), #fff);
+  animation: alBar linear forwards; opacity: .9; }
+.al-paused .al-progress { animation-play-state: paused; }
+
+@keyframes alIn { from { opacity: 0; transform: translateX(110%) scale(.9); } to { opacity: 1; transform: none; } }
+@keyframes alOut { to { opacity: 0; transform: translateX(110%) scale(.92); max-height: 0; margin-top: -12px; padding-top: 0; padding-bottom: 0; } }
+@keyframes alPop { from { transform: scale(0) rotate(-45deg); } to { transform: none; } }
+@keyframes alRing { from { opacity: .8; transform: scale(1); } to { opacity: 0; transform: scale(1.9); } }
+@keyframes alDraw { to { stroke-dashoffset: 0; } }
+@keyframes alFade { to { opacity: 1; } }
+@keyframes alBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes alShine { to { transform: translateX(100%); } }
+@keyframes alShake { 0%, 100% { translate: 0; } 20%, 60% { translate: -6px; } 40%, 80% { translate: 6px; } }
+
+@media (max-width: 600px) {
+  .al-stack { top: auto; bottom: 16px; right: 16px; left: 16px; width: auto; flex-direction: column-reverse; }
+  @keyframes alIn { from { opacity: 0; transform: translateY(120%) scale(.95); } to { opacity: 1; transform: none; } }
+  @keyframes alOut { to { opacity: 0; transform: translateY(120%); } }
+}
+
+/* ---------------- Field validation states ---------------- */
+.input-wrap { position: relative; }
+.input-wrap:has(.field-state) input { padding-right: 44px; }
+.field-state { position: absolute; right: 12px; top: 50%; width: 24px; height: 24px; margin-top: -12px; border-radius: 50%; display: grid; place-items: center;
+  animation: alPop .35s cubic-bezier(.2, 1.6, .4, 1) both; }
+.field-state svg { fill: none; stroke: #fff; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.field-state.is-ok { background: var(--ok); box-shadow: 0 0 0 4px rgba(18, 161, 80, .15); }
+.field-state.is-ok path { stroke-dasharray: 20; stroke-dashoffset: 20; animation: alDraw .35s .15s ease-out forwards; }
+.field-state.is-err { background: var(--red); box-shadow: 0 0 0 4px rgba(210, 20, 4, .14); }
+.field.valid input { border-color: var(--ok); }
+.field.valid input:focus { box-shadow: 0 0 0 4px rgba(18, 161, 80, .14); border-color: var(--ok); }
+.field.invalid input { animation: fieldShake .4s; }
+.field.invalid .err { display: flex; gap: 6px; align-items: flex-start; animation: errIn .25s ease-out; }
+.field .hint { display: block; margin-top: 5px; font-size: .78rem; color: var(--muted); }
+.email-suggest { margin-top: 6px; padding: 5px 10px; border-radius: 8px; border: 1px dashed #3A9BCB; background: rgba(58, 155, 203, .08); color: var(--ink);
+  font: inherit; font-size: .82rem; cursor: pointer; animation: errIn .25s ease-out; }
+.email-suggest:hover { background: rgba(58, 155, 203, .18); }
+.email-suggest strong { color: #22618F; }
+@keyframes fieldShake { 0%, 100% { translate: 0; } 25% { translate: -4px; } 75% { translate: 4px; } }
+@keyframes errIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* ---------------- Success card (replaces form after submit) ---------------- */
+.success-card { position: relative; overflow: hidden; text-align: center; padding: 44px 28px 36px; border-radius: 22px; color: #fff; outline: none;
+  background: var(--al-grad); box-shadow: 0 24px 60px rgba(11, 37, 86, .32); animation: scIn .6s cubic-bezier(.2, 1.1, .3, 1) both; }
+.success-card::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(60% 80% at 20% 0%, rgba(255, 255, 255, .22), transparent 60%), radial-gradient(50% 70% at 100% 100%, rgba(242, 183, 5, .18), transparent 70%); }
+.sc-check { position: relative; width: 96px; height: 96px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, .14); }
+.sc-pulse { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .6); animation: alRing 2s .6s ease-out infinite; opacity: 0; }
+.sc-p2 { animation-delay: 1.6s; }
+.sc-circle { stroke: #fff; stroke-width: 3; stroke-dasharray: 151; stroke-dashoffset: 151; animation: scStroke .6s .15s cubic-bezier(.65, 0, .45, 1) forwards; }
+.sc-tick { stroke: #fff; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: scStroke .4s .7s cubic-bezier(.65, 0, .45, 1) forwards; }
+.sc-title { position: relative; margin: 0 0 8px; font-size: 1.5rem; color: #fff; animation: errIn .4s .8s both; }
+.sc-text { position: relative; max-width: 460px; margin: 0 auto; color: rgba(255, 255, 255, .88); animation: errIn .4s .9s both; }
+.sc-text p { margin: 0; }
+.sc-ref { position: relative; display: inline-flex; gap: 8px; align-items: center; margin-top: 18px; padding: 8px 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .25); font-size: .85rem; animation: errIn .4s 1s both; }
+.sc-ref code { font-weight: 700; letter-spacing: .06em; color: #fff; }
+.sc-again { position: relative; display: inline-flex; margin-top: 22px; color: #fff; border-color: rgba(255, 255, 255, .6); animation: errIn .4s 1.1s both; }
+.sc-again:hover { background: #fff; color: #0B2556; }
+.sc-burst { position: absolute; left: 50%; top: 92px; width: 0; height: 0; pointer-events: none; }
+.sc-burst span { position: absolute; width: 8px; height: 12px; border-radius: 2px; opacity: 0; animation: scConfetti 1.3s .65s cubic-bezier(.15, .8, .3, 1) forwards; }
+@keyframes scIn { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes scStroke { to { stroke-dashoffset: 0; } }
+@keyframes scConfetti {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(.4); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--x), calc(var(--y) + 60px)) rotate(calc(var(--r) + 360deg)) scale(1); }
+}
+
+/* dark theme */
+html[data-theme="dark"] .email-suggest strong { color: #7cc6ea; }
+
+@media (prefers-reduced-motion: reduce) {
+  .al, .al-icon, .al-ring, .al::after, .field-state, .success-card, .sc-pulse, .sc-burst span, .field.invalid input { animation: none !important; }
+  .al-draw, .sc-circle, .sc-tick, .field-state.is-ok path { stroke-dashoffset: 0; animation: none; }
+  .al-dot, .sc-title, .sc-text, .sc-ref, .sc-again { opacity: 1; animation: none; }
+  .al-progress { animation-name: alBar; }
+}
