@@ -3,11 +3,19 @@
    ===================================================================== */
 
 /* ---------- Header: compact on scroll, brand navy when scrolling back up ---------- */
-.site-header { transition: background .35s ease, box-shadow .35s ease, border-color .35s ease; }
-.site-header .nav { transition: height .3s ease; }
+/* The navy layer sits behind the header content and simply fades in/out (gradients can't be
+   transitioned directly, which made the colour "snap"). Text and buttons cross-fade with it. */
+.site-header { transition: box-shadow .4s ease, border-color .4s ease; }
+.site-header::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, var(--hero-1), var(--hero-2)); opacity: 0; transition: opacity .4s ease; }
+.site-header.nav-up::before { opacity: 1; }
+.site-header .nav { position: relative; transition: height .3s ease; }
+.site-header .logo, .site-header .logo-text small, .site-header .nav-menu > li > a, .site-header .nav-menu .nav-link,
+.site-header .theme-toggle, .site-header .burger, .site-header .burger span, .site-header .qs-trigger, .site-header .qs-kbd, .site-header .nav-phone {
+  transition: color .4s ease, background-color .4s ease, border-color .4s ease, height .3s ease; }
 @media (min-width: 961px) { .site-header.scrolled .nav { height: 64px; } }
 
-.site-header.nav-up { background: linear-gradient(90deg, var(--hero-1), var(--hero-2)); border-color: transparent; box-shadow: 0 10px 30px rgba(15, 26, 46, .28); }
+.site-header.nav-up { border-color: transparent; box-shadow: 0 10px 30px rgba(15, 26, 46, .28); }
 .site-header.nav-up .logo, .site-header.nav-up .logo:hover { color: #fff; }
 .site-header.nav-up .logo-text small { color: #ff8a7d; }
 .site-header.nav-up .theme-toggle, .site-header.nav-up .burger, .site-header.nav-up .qs-trigger {

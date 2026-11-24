@@ -48,7 +48,7 @@ function Header() {
     setOpen(false);
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
-  useEffect(() => { setOpen(false); setDrop(null); }, [pathname, search]);
+  useEffect(() => { setOpen(false); setDrop(null); setNavUp(false); }, [pathname, search]);
   // Click/tap anywhere outside an open dropdown closes it
   useEffect(() => {
     if (!drop) return;
@@ -59,15 +59,23 @@ function Header() {
   useEffect(() => {
     /* scrolled: compact header · navUp: scrolling back up → header switches to the brand navy;
        scrolling down (or back at the very top) → normal white header */
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 8);
-      if (y < 80) { setNavUp(false); last = y; return; }
-      if (Math.abs(y - last) < 6) return;
-      setNavUp(y < last);
+    /* Direction is measured over a deliberate distance (not every pixel) so tiny trackpad /
+       touch movements and iOS bounce never make the colour flicker. */
+    let last = Math.max(0, window.scrollY), travel = 0, ticking = false;
+    const update = () => {
+      ticking = false;
+      const y = Math.max(0, window.scrollY);
+      const d = y - last;
       last = y;
+      setScrolled(y > 8);
+      if (y < 120) { travel = 0; setNavUp(false); return; }          // near the top → standard header
+      if (!d) return;
+      if (Math.sign(d) !== Math.sign(travel)) travel = 0;             // direction changed → start measuring again
+      travel += d;
+      if (travel <= -40) setNavUp(true);                              // scrolled up ≥ 40px → navy
+      else if (travel >= 12) setNavUp(false);                         // scrolled down → standard
     };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
     const onKey = e => { if (e.key === "Escape") { setOpen(false); setDrop(null); } };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
